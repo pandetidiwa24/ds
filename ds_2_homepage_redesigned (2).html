@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DS Digital Lab · Mohan Babu University</title>
+<style>
+/* ============ 1. TOKENS ============ */
+:root{--bg:#f6f3fc;--card:#fff;--ink:#241b3a;--muted:#6b6480;--line:#e7e1f0;--pri:#5b2a86;--pri2:#7c3aed;--acc:#e0592a;--soft:#f3eefb;--ok:#15803d;--bad:#b91c1c;--r:16px;--sh:0 1px 2px rgba(36,27,58,.05),0 10px 28px rgba(36,27,58,.08);--mono:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
+/* ============ 2. BASE ============ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:radial-gradient(900px 420px at 90% -8%,#e6d9ff 0,transparent 62%) no-repeat,radial-gradient(700px 380px at -6% 8%,#ffe0d0 0,transparent 58%) no-repeat,var(--bg)}
+a{color:var(--pri2);text-decoration:none}a:hover{text-decoration:underline}
+h1,h2,h3{line-height:1.25;margin:0}h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em}h2{font-size:20px}h3{font-size:17px}
+h1:focus{outline:none}
+p{margin:0 0 10px}
+:focus-visible{outline:3px solid #b79cff;outline-offset:2px;border-radius:6px}
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.skip{position:absolute;left:-999px;top:8px;background:#fff;padding:8px 12px;border-radius:8px;z-index:200}.skip:focus{left:8px}
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 20px}
+main{flex:1;padding:28px 0 56px;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ic{flex:none;vertical-align:-3px}
+.muted{color:var(--muted)}.eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
+.lead{color:var(--muted);font-size:16px;max-width:60ch}
+/* ============ 3. HEADER / FOOTER ============ */
+.hdr{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
+.hdr::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pri),var(--pri2) 45%,var(--acc))}
+.hdr-in{display:flex;align-items:center;gap:18px;height:66px}
+.brand{display:flex;align-items:center;gap:11px;color:var(--ink)}.brand:hover{text-decoration:none}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(150deg,var(--pri),var(--pri2));color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;letter-spacing:.04em;box-shadow:inset 0 -12px 20px rgba(0,0,0,.16)}
+.brand-t{display:flex;flex-direction:column;line-height:1.15}.brand-t b{font-size:16px;letter-spacing:-.01em}.brand-t small{color:var(--muted);font-size:11.5px}
+.nav{display:flex;gap:2px;margin-left:auto;align-self:stretch}
+.nav a{display:flex;align-items:center;padding:0 16px;color:var(--muted);font-weight:700;font-size:12.5px;letter-spacing:.08em;border-bottom:3px solid transparent}
+.nav a:hover{background:var(--soft);color:var(--pri);text-decoration:none}
+.nav a.on{color:var(--pri);border-bottom-color:var(--acc)}
+.hdr-r{display:flex;gap:6px}
+.icon-btn{border:1px solid var(--line);background:#fff;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;cursor:pointer;color:var(--pri)}
+.icon-btn:hover{background:var(--soft);border-color:var(--pri2)}.menu{display:none}
+.ftr{background:linear-gradient(150deg,#241b3a,#3b2456);color:#cbbde4;border-top:0;padding:32px 0;margin-top:auto}
+.ftr b{color:#fff}.ftr-in{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between;align-items:center}
+.ftr nav{display:flex;gap:16px;flex-wrap:wrap}.ftr nav a{color:#cbbde4}.ftr nav a:hover{color:#fff}.ftr small{color:#a99cc4}
+.ftr .soc{border-color:#6b4f9c;color:#e6dcf7;background:transparent}.ftr .soc:hover{background:var(--acc);border-color:var(--acc);color:#fff}.ftr .soc.disabled{border-color:#4b3a68;color:#8a7da6}
+/* ============ 4. COMPONENTS ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 15px;border-radius:11px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--soft);text-decoration:none;transform:translateY(-1px)}
+.btn[disabled],.btn.off{opacity:.5;cursor:not-allowed;transform:none}
+.btn-pri{background:linear-gradient(150deg,var(--pri),var(--pri2));color:#fff;border-color:transparent}.btn-pri:hover{background:linear-gradient(150deg,var(--pri2),var(--pri));border-color:transparent}
+.btn-acc{background:var(--acc);color:#fff;border-color:var(--acc)}.btn-acc:hover{background:#c0491f}
+.btn-sm{padding:6px 11px;font-size:12.5px;border-radius:9px}.btn-ico{padding:7px}
+.btn-danger{color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:20px}
+.chip{display:inline-block;background:var(--soft);color:var(--pri);padding:3px 11px;border-radius:8px;font-size:12px;font-weight:600;margin:0 4px 4px 0}
+.chip.d{background:#fdeee4;color:#b8461a}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
+.sec-h h1,.sec-h h2{position:relative;padding-left:14px}
+.sec-h h1::before,.sec-h h2::before{content:"";position:absolute;left:0;top:.12em;bottom:.12em;width:5px;border-radius:3px;background:linear-gradient(var(--pri),var(--acc))}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.empty{padding:36px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:var(--r);grid-column:1/-1}.empty.sm{padding:16px}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.stat{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:12px;padding:12px 18px;min-width:122px;box-shadow:var(--sh)}.stat b{display:block;font-size:24px;color:var(--pri);line-height:1.1}.stat span{font-size:11.5px;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;font-weight:600}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--muted);margin-bottom:14px}.crumbs span{opacity:.6}
+/* home */
+.home{display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-template-areas:"hero aside" "search aside" "cards aside" "tiles aside";grid-template-rows:auto auto auto 1fr;gap:22px 28px;align-items:start}
+.hero{grid-area:hero;position:relative}
+.hero h1{background:linear-gradient(100deg,var(--pri),var(--pri2) 55%,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
+.s-area{grid-area:search}.c-area{grid-area:cards}.t-area{grid-area:tiles}.aside{grid-area:aside;position:sticky;top:90px}
+.searchbox{position:relative}
+.q{width:100%;padding:14px 44px 14px 46px;border:2px solid var(--line);border-radius:14px;font:inherit;background:#fff;box-shadow:var(--sh);transition:.15s}
+.q:focus{border-color:var(--pri2);outline:none;box-shadow:0 0 0 4px rgba(124,58,237,.15)}
+.searchbox>.ic{position:absolute;left:16px;top:16px;color:var(--muted)}
+.clear{position:absolute;right:8px;top:8px;border:0;background:transparent;width:32px;height:32px;border-radius:8px;cursor:pointer;color:var(--muted)}.clear:hover{background:var(--soft)}
+.results{position:absolute;left:0;right:0;top:56px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px rgba(36,27,58,.18);max-height:360px;overflow:auto;z-index:20;padding:6px}
+.results.static{position:static;margin-top:10px;box-shadow:none}
+.res{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--ink)}.res:hover,.res.on{background:var(--soft);text-decoration:none}
+.tag{font-size:10.5px;font-weight:800;letter-spacing:.07em;color:var(--acc);background:#fde7dd;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.res-t{font-weight:600}.res-s{margin-left:auto;color:var(--muted);font-size:12.5px;text-align:right}
+mark{background:#fff0a8;border-radius:3px;padding:0 1px}
+/* exp card */
+.exp-card{position:relative;display:flex;flex-direction:column;gap:12px;padding-top:0;overflow:hidden;transition:.18s}
+.exp-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--pri),var(--pri2))}
+.exp-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(36,27,58,.14);border-color:var(--pri2)}
+.exp-top{display:flex;gap:14px;align-items:center;padding-top:4px}.thumb{width:64px;height:64px;flex:none;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:8px}.thumb svg{width:100%;height:100%;color:var(--pri2)}
+.exp-card h3{margin-bottom:2px}.exp-card p{color:var(--muted);font-size:14px;margin:0}
+.exp-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:12px;border-top:1px dashed var(--line)}
+.dots{display:flex;gap:6px}
+.dot{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--line);color:var(--muted);display:grid;place-items:center;font-weight:700;font-size:12.5px;background:#fff}.dot:hover{background:var(--pri2);border-color:var(--pri2);color:#fff;text-decoration:none}.dot.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.acts{margin-left:auto;display:flex;gap:4px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.tile{position:relative;display:flex;gap:14px;align-items:center;color:var(--ink);padding:22px;background:linear-gradient(135deg,#fff,var(--soft))}
+.tile::after{content:"→";position:absolute;right:20px;font-size:20px;color:var(--pri2);transition:.18s}.tile:hover::after{transform:translateX(4px)}
+.tile:hover{text-decoration:none;transform:translateY(-3px);border-color:var(--pri2)}
+.tile .big{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(150deg,var(--pri),var(--pri2));color:#fff}
+/* profile */
+.profile{text-align:left}
+.avatar{width:104px;height:104px;border-radius:26px;margin:0 auto 16px;background:linear-gradient(150deg,var(--pri),var(--acc));color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800;overflow:hidden;box-shadow:0 12px 26px rgba(91,42,134,.28)}.avatar img{width:100%;height:100%;object-fit:cover}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:8px 10px;margin:0 0 16px}.kv dt{color:var(--muted);font-size:13px}.kv dd{margin:0;font-weight:600;word-break:break-word}
+.socials{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.soc{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--pri2);display:grid;place-items:center;color:var(--pri2);background:#fff}.soc:hover{background:var(--pri2);color:#fff;text-decoration:none}.soc.disabled{border-color:var(--line);color:#a0aabb;cursor:not-allowed}.soc.disabled:hover{background:#fff;color:#a0aabb}
+/* exp page */
+.exp-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:24px;align-items:start}
+.subnav{position:sticky;top:90px;display:flex;flex-direction:column;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:10px;box-shadow:var(--sh)}
+.subnav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink);font-weight:600;font-size:13.5px}.subnav a:hover{background:#fff;text-decoration:none}.subnav a.on{background:linear-gradient(150deg,var(--pri),var(--pri2));color:#fff}
+.subnav .L{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.7);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;flex:none;color:var(--pri)}.subnav a.on .L{background:rgba(255,255,255,.2);border-color:transparent;color:#fff}
+.subnav .tk{margin-left:auto;color:var(--ok)}.subnav a.on .tk{color:#9ff0bf}
+.block{margin-bottom:18px}.block h2{margin-bottom:8px;display:flex;align-items:center;gap:8px}
+ol.steps{margin:0;padding-left:22px}ol.steps li{margin-bottom:6px}
+.ed{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fbf9fe}
+.gut{margin:0;padding:12px 8px;background:#efe9f8;color:#8b7fa6;text-align:right;font:13px/1.55 var(--mono);overflow:hidden;min-width:42px;user-select:none;height:340px}
+.code{flex:1;border:0;resize:vertical;padding:12px;height:340px;font:13px/1.55 var(--mono);color:#1b2a41;background:transparent;white-space:pre;overflow:auto;tab-size:4}.code:focus{outline:none}
+.tb{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.out{background:#1e1533;color:#f0e9fb;border-radius:12px;padding:14px;min-height:90px}
+.out .demo{background:#2f2149;color:#cdbde8;border-radius:8px;padding:7px 10px;font-size:12.5px;margin-bottom:10px}
+.outtext{margin:0;font:13px/1.5 var(--mono);white-space:pre;overflow:auto;max-height:420px}
+.out.err{border:1px solid #f08a8a}.err-l{color:#ffb4b4}.ok-l{color:#8be9b0}
+.plot{margin-top:12px;background:#fff;border-radius:10px;padding:10px;color:var(--ink)}.plot img{max-width:100%;display:block;margin:auto}
+.plot-ph{border:2px dashed #c9bbe3;border-radius:10px;padding:26px;text-align:center;color:var(--muted)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #9c8bc4;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}@keyframes sp{to{transform:rotate(360deg)}}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+/* modules / pdf */
+.mods{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
+.mlist{display:flex;flex-direction:column;gap:8px}
+.mi{display:block;padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-weight:600}.mi small{display:block;color:var(--muted);font-weight:400}.mi:hover{background:var(--soft);text-decoration:none;border-left-color:var(--pri2)}.mi.on{border-color:var(--pri);border-left-color:var(--acc);background:linear-gradient(150deg,var(--pri),var(--pri2));color:#fff}.mi.on small{color:#e3d6f6}
+.pdf{padding:0;overflow:hidden}.pdf-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:#faf7ff}.pdf-h h2{margin-right:auto;font-size:16px}
+.pdf-h input{width:60px;padding:6px;border:1px solid var(--line);border-radius:8px;font:inherit;text-align:center}
+.pdf-b{background:#e6ddf2;padding:20px;min-height:520px;overflow:auto;display:flex;justify-content:center;align-items:flex-start}
+.pdf:fullscreen{background:#fff;overflow:auto}
+.paper{background:#fff;width:calc(520px*var(--z,1));max-width:none;aspect-ratio:1/1.35;box-shadow:0 6px 22px rgba(36,27,58,.18);padding:2.6em;font-size:calc(14px*var(--z,1));display:flex;flex-direction:column;gap:.7em}
+.paper h3{font-size:1.5em}.paper .ln{height:.7em;background:#e8edf5;border-radius:4px}.paper .pn-n{margin-top:auto;text-align:center;color:var(--muted);font-size:.8em}
+.pdf-frame{width:100%;height:640px;border:0;background:#fff}
+/* tools */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tab{border:1px solid var(--line);background:#fff;padding:7px 14px;border-radius:999px;cursor:pointer;font:inherit;font-weight:600;font-size:13px;color:var(--muted)}.tab.on,.tab:hover{background:var(--pri);color:#fff;border-color:var(--pri)}
+.tool{display:flex;flex-direction:column;gap:10px}.mono-b{width:48px;height:48px;border-radius:14px;color:#fff;display:grid;place-items:center;font-weight:800;font-size:17px}
+pre.snip{background:#1e1533;color:#f0e9fb;border-radius:12px;padding:14px;overflow:auto;font:13px/1.5 var(--mono);margin:8px 0}
+.filters{display:grid;grid-template-columns:2fr repeat(3,1fr) auto;gap:10px;margin:18px 0}
+.filters input,.filters select,.fld input,.fld select,.fld textarea{padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;width:100%}
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(36,27,58,.45);display:flex;justify-content:center;align-items:flex-start;padding:4vh 12px;overflow:auto;z-index:100;animation:fade .2s}
+.modal{background:#fff;border-radius:18px;width:100%;max-width:860px;box-shadow:0 30px 80px rgba(0,0,0,.3)}.modal.sm{max-width:620px;padding:16px}
+.m-h{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}
+.m-b{padding:18px 22px}.m-f{display:flex;justify-content:flex-end;gap:10px;padding:14px 22px;border-top:1px solid var(--line);flex-wrap:wrap}
+.fld{margin-bottom:12px}.fld label{display:block;font-weight:600;font-size:13px;margin-bottom:4px}.fld textarea{font:13px/1.5 var(--mono);min-height:90px}.fld small{color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:300}
+.toast{background:var(--pri);color:#fff;padding:11px 16px;border-radius:12px;box-shadow:var(--sh);animation:fade .25s}.toast.bad{background:var(--bad)}
+
+/* ============ HOME PAGE REDESIGN ============ */
+.home{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 315px;
+  grid-template-areas:"hero aside";
+  grid-template-rows:auto;
+  gap:24px 26px;
+  align-items:start;
+}
+.home .hero{
+  padding:34px 36px;
+  border-radius:24px;
+  color:#fff;
+  overflow:hidden;
+  position:relative;
+  background:
+    radial-gradient(circle at 90% 15%,rgba(96,165,250,.28),transparent 32%),
+    radial-gradient(circle at 10% 100%,rgba(45,212,191,.18),transparent 35%),
+    linear-gradient(135deg,#0f172a 0%,#172554 52%,#1e3a8a 100%);
+  box-shadow:0 22px 55px rgba(15,23,42,.20);
+  border:1px solid rgba(255,255,255,.08);
+}
+.home .hero::after{
+  content:"";
+  position:absolute;
+  width:240px;height:240px;
+  right:-80px;bottom:-110px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  box-shadow:0 0 0 34px rgba(255,255,255,.025),0 0 0 70px rgba(255,255,255,.018);
+}
+.home .hero .eyebrow{color:#67e8f9;margin-bottom:9px}
+.home .hero h1{
+  color:#fff;
+  background:none;
+  font-size:clamp(30px,4.2vw,48px);
+  max-width:720px;
+  letter-spacing:-.035em;
+}
+.home .hero .lead{
+  color:#cbd5e1;
+  max-width:650px;
+  font-size:15px;
+  margin-top:10px;
+}
+.home .hero-intro{position:relative;z-index:1}
+.home .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;position:relative;z-index:2}
+.home .hero-actions .btn{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(8px)}
+.home .hero-actions .btn:hover{background:rgba(255,255,255,.16)}
+.home .hero-actions .btn-primary{background:#fff;color:#172554;border-color:#fff}
+.home .hero-actions .btn-primary:hover{background:#e0f2fe}
+.home .stats{
+  margin-top:26px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  position:relative;z-index:1;
+}
+.home .stat{
+  min-width:0;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.12);
+  border-left:0;
+  border-radius:14px;
+  box-shadow:none;
+  padding:13px 15px;
+  backdrop-filter:blur(8px);
+}
+.home .stat b{color:#fff;font-size:23px}
+.home .stat span{color:#cbd5e1}
+.home .s-area{position:relative}
+.home .searchbox .q{
+  height:58px;
+  border:1px solid #dbe4f0;
+  border-radius:16px;
+  padding-left:50px;
+  box-shadow:0 8px 25px rgba(15,23,42,.07);
+}
+.home .searchbox>.ic{top:18px;color:#64748b}
+.home .c-area,.home .t-area{min-width:0}
+.home .sec-h{margin-bottom:12px}
+.home .sec-h h2{font-size:18px}
+.home .c-area .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.home .exp-card{
+  border-color:#e2e8f0;
+  box-shadow:0 7px 22px rgba(15,23,42,.06);
+  border-radius:17px;
+}
+.home .exp-card::before{background:linear-gradient(90deg,#2563eb,#06b6d4)}
+.home .exp-card:hover{border-color:#60a5fa;box-shadow:0 15px 35px rgba(37,99,235,.12)}
+.home .thumb{background:#eff6ff;border-color:#dbeafe}
+.home .thumb svg{color:#2563eb}
+.home .dot:hover{background:#2563eb;border-color:#2563eb}
+.home .tile{
+  border-color:#e2e8f0;
+  border-radius:17px;
+  background:linear-gradient(135deg,#fff,#f8fafc);
+  box-shadow:0 7px 22px rgba(15,23,42,.055);
+}
+.home .tile .big{background:linear-gradient(145deg,#2563eb,#0891b2)}
+.home .tile:hover{border-color:#60a5fa;box-shadow:0 14px 30px rgba(37,99,235,.10)}
+.home .aside{top:90px}
+.home .aside .card{
+  border-radius:20px;
+  border-color:#e2e8f0;
+  box-shadow:0 10px 30px rgba(15,23,42,.07);
+}
+.home .profile .avatar{
+  background:linear-gradient(145deg,#2563eb,#0891b2);
+  box-shadow:0 12px 28px rgba(37,99,235,.22);
+}
+.home .profile .socials .soc{border-color:#bfdbfe;color:#2563eb}
+.home .profile .socials .soc:hover{background:#2563eb;color:#fff}
+.home .home-welcome{
+  display:flex;align-items:center;gap:9px;
+  color:#94a3b8;font-size:12px;margin-top:3px;
+}
+.home .home-welcome::before{
+  content:"";width:7px;height:7px;border-radius:50%;background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.14);
+}
+@media(max-width:720px){
+  .home .hero{padding:26px 22px;border-radius:20px}
+  .home .stats{grid-template-columns:1fr 1fr}
+  .home .stats .stat:last-child{grid-column:1/-1}
+  .home .c-area .grid{grid-template-columns:1fr}
+}
+
+/* ============ 7. RESPONSIVE ============ */
+@media(max-width:960px){
+ .home{grid-template-columns:1fr;grid-template-areas:"hero" "aside"}.aside{position:static}
+ .exp-layout{grid-template-columns:1fr}.subnav{position:static;flex-direction:row;overflow-x:auto}.subnav a span:not(.L){display:none}.subnav a:first-child span{display:inline}.subnav .tk{margin-left:0}
+ .mods{grid-template-columns:1fr}.mlist{flex-direction:row;overflow-x:auto}.mi{min-width:170px}
+ .filters{grid-template-columns:1fr 1fr}
+}
+@media(max-width:720px){
+ .menu{display:grid}.nav{display:none;position:absolute;left:0;right:0;top:66px;background:#fff;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;padding:10px 20px;margin:0;gap:2px}.nav.open{display:flex}
+ .nav a{padding:11px 12px;border-bottom:0;border-left:3px solid transparent;align-self:auto}
+ .nav a.on{border-left-color:var(--acc)}
+ .hdr-r{margin-left:auto}.tiles{grid-template-columns:1fr}.row2{grid-template-columns:1fr}.brand-t small{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="app"></div>
+<div id="toasts" aria-live="polite"></div>
+<noscript>This portal needs JavaScript enabled.</noscript>
+
+<script>
+(function(){'use strict';
+/* ==========================================================
+   1. CONFIG  -  edit ONLY this block to personalise the site
+   ========================================================== */
+const CONFIG={
+  portal:{name:"DS Digital Lab",university:"Mohan Babu University",year:"2026"},
+  student:{
+    photoUrl:"",                       // paste an image path/URL here (empty = initials avatar)
+    name:"PANDETI DIWAKAR",rollNumber:"24102A030066",section:"DS-2",subject:"Data Science",
+    faculty:"BosuBabu",designation:"Assistant Professor",
+    socials:[
+      {id:"web",label:"Website",url:"[WEBSITE_URL]"},
+      {id:"linkedin",label:"LinkedIn",url:"[LINKEDIN_URL]"},
+      {id:"github",label:"GitHub",url:"[GITHUB_URL]"},
+      {id:"other",label:"Other",url:"[OTHER_URL]"}
+    ]},
+  /* Sandbox backend contract (optional): POST {backendUrl}/run  { code, language } -> { stdout, stderr }
+     Leave empty = demo mode (saved notebook outputs are shown; code is NOT executed). */
+  sandbox:{backendUrl:""}
+};
+
+/* ==========================================================
+   2. DATA  -  experiments (from the notebooks), modules, tools
+   ========================================================== */
+const S=String.raw;
+const T=s=>s.replace(/^\n+/,'').replace(/\s+$/,'');
+const P=(title,aim,procedure,code,output,plot)=>({title,aim,procedure,code:T(code),output:T(output),image:'',plot:!!plot});
+const mkSubs=a=>a.map((s,i)=>({id:'ABCDE'[i],...s}));
+
+const DEFAULTS=[
+{id:'exp-01',number:'01',title:'Data Loading and Storage with Pandas',
+ description:'Load datasets into pandas from CSV, TXT, JSON, Excel, URLs and dictionaries, then export results.',
+ overview:'This experiment shows how data enters a Data Science workflow. You read tabular data from files, web URLs, Python dictionaries, JSON strings and Excel workbooks (including multiple sheets), inspect it with head(), and write results back to JSON and Excel.',
+ tools:['Python','Pandas','openpyxl'],difficulty:'Beginner',
+ subs:mkSubs([
+  P('Reading a CSV file','To import pandas and load a CSV file into a DataFrame for inspection.',
+    ['Import pandas and StringIO.','Call pd.read_csv() with the file name (titanic.csv).','Use head() to view the first five records.'],
+    S`
+import pandas as pd
+from io import StringIO
+
+titanic_df = pd.read_csv("titanic.csv")
+titanic_df.head()`,
+    S`
+   PassengerId  Survived  Pclass  \
+0            1         0       3   
+1            2         1       1   
+2            3         1       3   
+3            4         1       1   
+4            5         0       3   
+
+                                                Name     Sex   Age  SibSp  \
+0                            Braund, Mr. Owen Harris    male  22.0      1   
+1  Cumings, Mrs. John Bradley (Florence Briggs Th...  female  38.0      1   
+2                             Heikkinen, Miss. Laina  female  26.0      0   
+3       Futrelle, Mrs. Jacques Heath (Lily May Peel)  female  35.0      1   
+4                           Allen, Mr. William Henry    male  35.0      0   
+
+   Parch            Ticket     Fare Cabin Embarked  
+0      0         A/5 21171   7.2500   NaN        S  
+1      0          PC 17599  71.2833   C85        C  
+2      0  STON/O2. 3101282   7.9250   NaN        S  
+3      0            113803  53.1000  C123        S  
+4      0            373450   8.0500   NaN        S  `),
+  P('Reading from a URL and a TXT file','To load tabular data from a web URL and from a tab-separated text file.',
+    ['Pass the dataset URL directly to pd.read_csv().','Read the text file with pd.read_table() using a tab separator.','Display both DataFrames with head().'],
+    S`
+df_from_url = pd.read_csv("https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv")
+df_from_url.head()
+
+df_from_txt = pd.read_table("data_set.txt", sep="\t")
+df_from_txt.head()`,
+    S`
+   sepal_length  sepal_width  petal_length  petal_width species
+0           5.1          3.5           1.4          0.2  setosa
+1           4.9          3.0           1.4          0.2  setosa
+2           4.7          3.2           1.3          0.2  setosa
+3           4.6          3.1           1.5          0.2  setosa
+4           5.0          3.6           1.4          0.2  setosa
+
+   RollNo    Name  Class Section  Marks
+0     101   Aarav     10       A     88
+1     102  Ananya     10       A     92
+2     103   Rohan     10       B     76
+3     104   Priya     10       B     85
+4     105  Vikram     10       A     90`),
+  P('DataFrame from a dictionary and Excel I/O','To create a DataFrame from a dictionary and exchange it with an Excel file.',
+    ['Define a dictionary of lists and convert it with pd.DataFrame().','Save it with to_excel() (index=False).','Read it back with pd.read_excel().'],
+    S`
+student_data = {
+    "Roll_No": [10, 20, 30, 40, 50],
+    "Name": ["Praneeth", "Reddy", "Karthik", "Tharun", "Shiva"],
+    "Department": ["IT", "CSE", "AIML", "DS", "CS"],
+    "Percentage": [90, 86, 92, 88, 95],
+}
+
+df_from_dict = pd.DataFrame(student_data)
+df_from_dict.head()
+
+df_from_dict.to_excel("student_data.xlsx", sheet_name="Student Details", index=False)
+df_from_excel = pd.read_excel("student_data.xlsx")
+df_from_excel`,
+    S`
+   Roll_No      Name Department  Percentage
+0       10  Praneeth         IT          90
+1       20     Reddy        CSE          86
+2       30   Karthik       AIML          92
+3       40    Tharun         DS          88
+4       50     Shiva         CS          95`),
+  P('Working with JSON data','To read JSON from a file, a string and a URL, and to write a DataFrame to JSON.',
+    ['Read data.json with pd.read_json().','Export with to_json(orient="records", indent=4).','Read a JSON string via StringIO and a JSON URL.'],
+    S`
+df_from_json = pd.read_json("data.json")
+df_from_json.head()
+
+df_from_json.to_json("student_data.json", orient="records", indent=4)
+
+json_string_data = """
+[{"roll_no":124,"Name":"Praneeth","Marks":89},
+ {"roll_no":125,"Name":"Karthik","Marks":74},
+ {"roll_no":111,"Name":"Reddy","Marks":100}]
+"""
+df_json_from_string = pd.read_json(StringIO(json_string_data))
+df_json_from_string
+
+json_url = "https://jsonplaceholder.typicode.com/users"
+df_json_from_url = pd.read_json(json_url)
+df_json_from_url`,
+    S`
+   Duration  Pulse  Maxpulse  Calories
+0        60    110       130     409.1
+1        60    117       145     479.0
+2        60    103       135     340.0
+3        45    109       175     282.4
+4        45    117       148     406.0
+
+   roll_no      Name  Marks
+0      124  Praneeth     89
+1      125   Karthik     74
+2      111     Reddy    100
+
+   id                      name       username                      email  ...
+0   1             Leanne Graham           Bret          Sincere@april.biz  ...
+1   2              Ervin Howell      Antonette          Shanna@melissa.tv  ...
+2   3          Clementine Bauch       Samantha         Nathan@yesenia.net  ...
+
+[10 rows x 8 columns]`),
+  P('Multiple sheets in an Excel workbook','To write several DataFrames into one workbook and read all sheets back.',
+    ['Create a second DataFrame (courses).','Use pd.ExcelWriter with the openpyxl engine to write two sheets.','Read with sheet_name=None to get a dictionary of sheets.'],
+    S`
+course_data = {
+    "course_id": ["c101", "c102", "c103", "c104"],
+    "course_name": ["Python", "Java", "ML", "DS"],
+    "credits": [4, 3, 4, 5],
+}
+df_courses = pd.DataFrame(course_data)
+
+with pd.ExcelWriter("college_data.xlsx", engine="openpyxl") as writer:
+    df_from_excel.to_excel(writer, sheet_name="Students", index=False)
+    df_courses.to_excel(writer, sheet_name="courses", index=False)
+
+excel_data = pd.read_excel("college_data.xlsx", sheet_name=None)
+print(excel_data.keys())
+print(excel_data["courses"])`,
+    S`
+dict_keys(['Students', 'courses'])
+  course_id course_name  credits
+0      c101      Python        4
+1      c102        Java        3
+2      c103          ML        4
+3      c104          DS        5`)
+ ])},
+
+{id:'exp-02',number:'02',title:'Web API and SQLite Database Access',
+ description:'Fetch records from a REST API and manage a SQLite database using Python and pandas.',
+ overview:'Real data often lives behind a web API or inside a database. In part A you request JSON from the GitHub API using requests. In parts B to E you create a SQLite database, insert rows, query them into pandas, and perform UPDATE and DELETE operations.',
+ tools:['Python','Pandas','Requests','SQLite'],difficulty:'Intermediate',
+ subs:mkSubs([
+  P('Fetching data from a REST API','To send an HTTP GET request to the GitHub API and parse the JSON response.',
+    ['Import requests and pandas.','Call requests.get(url) and check the status code.','Convert the response to Python objects with response.json().'],
+    S`
+import requests
+import pandas as pd
+
+url = "https://api.github.com/repos/pandas-dev/pandas/issues"
+response = requests.get(url)
+print(response)
+
+issues = response.json()
+print(issues)`,
+    S`
+<Response [200]>
+[{'url': 'https://api.github.com/repos/pandas-dev/pandas/issues/...', 'id': ..., 'title': ..., ...}, ...]
+# one dictionary per issue (list of JSON objects)`),
+  P('Connecting to SQLite and creating a table','To open a SQLite database and create a Students table.',
+    ['Import sqlite3.','Connect with sqlite3.connect("students.db").','Create a cursor and run CREATE TABLE IF NOT EXISTS.'],
+    S`
+import sqlite3
+import pandas as pd
+
+conn = sqlite3.connect("students.db")
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Students(
+    id INTEGER,
+    name TEXT
+)
+""")`,
+    S`
+<sqlite3.Cursor object at 0x...>
+# database file students.db opened; table Students created`),
+  P('Inserting and reading records','To insert rows into the table and read them into a DataFrame.',
+    ['Run INSERT statements with cursor.execute().','Commit with conn.commit().','Read the table with pd.read_sql_query().'],
+    S`
+cursor.execute("INSERT INTO Students VALUES (1, 'John')")
+cursor.execute("INSERT INTO Students VALUES (2, 'Reddy')")
+cursor.execute("INSERT INTO Students VALUES (3, 'tharun')")
+cursor.execute("INSERT INTO Students VALUES (4, 'Kanchana')")
+conn.commit()
+
+students_df = pd.read_sql_query("SELECT * from Students", conn)
+students_df`,
+    S`
+   id      name
+0   1      John
+1   2     Reddy
+2   3    tharun
+3   4  Kanchana`),
+  P('Updating a record','To modify an existing row using an UPDATE statement.',
+    ['Run UPDATE ... SET ... WHERE id = 1.','Query the table again.','Verify that the name changed.'],
+    S`
+cursor.execute("UPDATE Students SET name = 'Alice' WHERE id = 1")
+
+students_df = pd.read_sql_query("SELECT * from Students", conn)
+students_df`,
+    S`
+   id      name
+0   1     Alice
+1   2     Reddy
+2   3    tharun
+3   4  Kanchana`),
+  P('Deleting a record and closing the connection','To delete a row, commit the changes and close the database safely.',
+    ['Run DELETE ... WHERE id = 1.','Query to confirm the row is removed.','Commit and close the connection.'],
+    S`
+cursor.execute("DELETE from Students where id = 1")
+
+students_df = pd.read_sql_query("SELECT * from Students", conn)
+students_df
+
+conn.commit()
+conn.close()`,
+    S`
+   id      name
+0   2     Reddy
+1   3    tharun
+2   4  Kanchana`)
+ ])},
+
+{id:'exp-03',number:'03',title:'Data Cleaning and Transformation',
+ description:'Detect, drop and fill missing values, encode categories and rename columns to prepare clean data.',
+ overview:'Raw data is rarely ready for analysis. This experiment covers finding missing values (NaN), removing or filling them, converting categorical text to numbers with map(), renaming columns, generating random data with NumPy and filtering using boolean masks.',
+ tools:['Python','Pandas','NumPy'],difficulty:'Beginner',
+ subs:mkSubs([
+  P('Detecting missing values','To create a DataFrame with NaN values and detect them with isna().',
+    ['Import pandas and numpy.','Build a DataFrame containing np.nan.','Use isna() to get a True/False mask.'],
+    S`
+import pandas as pd
+import numpy as np
+
+data = {
+    "A": [1, 2, np.nan],
+    "B": [4, np.nan, np.nan]
+}
+df = pd.DataFrame(data)
+print(df.isna())`,
+    S`
+       A      B
+0  False  False
+1  False   True
+2   True   True`),
+  P('Dropping and filling missing values','To remove rows with missing data (dropna) and replace missing data (fillna).',
+    ['Call df.dropna() to keep complete rows only.','Call df.fillna(0) to replace NaN by 0.','Print both results.'],
+    S`
+df_clean = df.dropna()
+df_filled = df.fillna(0)
+
+print(df_clean)
+print(df_filled)`,
+    S`
+     A    B
+0  1.0  4.0
+     A    B
+0  1.0  4.0
+1  2.0  0.0
+2  0.0  0.0`),
+  P('Encoding categories and renaming columns','To convert text categories to numbers with map() and rename a column.',
+    ['Create a DataFrame with a gender column.','Add gender_num using map({"male":0,"female":1}).','Rename the column using rename(columns=...).'],
+    S`
+df_gender = pd.DataFrame({"gender": ["male", "female", "male"]})
+df_gender["gender_num"] = df_gender["gender"].map({"male": 0, "female": 1})
+
+df_renamed = df_gender.rename(columns={"gender": "Gender"})
+print(df_renamed)`,
+    S`
+   Gender  gender_num
+0    male           0
+1  female           1
+2    male           0`),
+  P('Generating random data','To create a 100 x 3 DataFrame of random numbers using NumPy.',
+    ['Use np.random.rand(100, 3).','Wrap it in pd.DataFrame().','Display the DataFrame (values differ on every run).'],
+    S`
+data_df = pd.DataFrame(np.random.rand(100, 3))
+data_df`,
+    S`
+           0         1         2
+0   0.057500  0.329316  0.507884
+1   0.566882  0.346235  0.829352
+2   0.434189  0.317685  0.938656
+3   0.666764  0.314918  0.233012
+4   0.572920  0.613973  0.791525
+..       ...       ...       ...
+95  0.595546  0.827904  0.117725
+96  0.979879  0.161415  0.511918
+97  0.880727  0.019426  0.028567
+98  0.835296  0.350031  0.478636
+99  0.446346  0.354317  0.842980
+
+[100 rows x 3 columns]`),
+  P('Boolean masking and counting','To build a boolean mask over the DataFrame and count True values per column.',
+    ['Apply comparison operators to the whole DataFrame.','Combine conditions using the | operator.','Use sum() to count True values per column.'],
+    S`
+outliers = (data_df > 3) | (data_df <= 3)
+print(outliers.sum())`,
+    S`
+0    100
+1    100
+2    100
+dtype: int64`)
+ ])},
+
+{id:'exp-04',number:'04',title:'Hierarchical Indexing (MultiIndex)',
+ description:'Create hierarchical MultiIndex Series and DataFrames, select rows with loc, then reshape using stack and unstack.',
+ overview:'Hierarchical (multi-level) indexing lets one axis carry several index levels. You build a MultiIndex from arrays and tuples, create Series and DataFrames on top of it, select data level by level with loc, and pivot data between rows and columns with unstack() and stack().',
+ tools:['Python','Pandas'],difficulty:'Intermediate',
+ subs:mkSubs([
+  P('MultiIndex from arrays','To create a MultiIndex from arrays and attach it to a Series.',
+    ['Define two lists (Department and Branch).','Create the index with pd.MultiIndex.from_arrays().','Create a Series of marks using that index.'],
+    S`
+import pandas as pd
+
+index = [
+    ['Engineering', 'Engineering', 'Science', 'Science'],
+    ['CSE', 'ECE', 'Physics', 'Chemistry']
+]
+multi_index = pd.MultiIndex.from_arrays(index, names=['Department', 'Branch'])
+
+marks = pd.Series([85, 78, 92, 88], index=multi_index)
+print(marks)`,
+    S`
+Department   Branch   
+Engineering  CSE          85
+             ECE          78
+Science      Physics      92
+             Chemistry    88
+dtype: int64`),
+  P('Selecting data with loc','To access outer and inner index levels using loc.',
+    ['Select one department: marks.loc["Engineering"].','Select a single value with two keys.','Select another department.'],
+    S`
+print(marks.loc["Engineering"])
+print(marks.loc["Engineering", "CSE"])
+print(marks.loc["Science"])`,
+    S`
+Branch
+CSE    85
+ECE    78
+dtype: int64
+85
+Branch
+Physics      92
+Chemistry    88
+dtype: int64`),
+  P('MultiIndex from tuples','To build a MultiIndex from a list of tuples.',
+    ['Write (outer, inner) tuples.','Call pd.MultiIndex.from_tuples() with names.','Print the index object.'],
+    S`
+index = pd.MultiIndex.from_tuples(
+    [
+        ('Engineering', 'CSE'),
+        ('Engineering', 'ECE'),
+        ('Science', 'Physics'),
+        ('Science', 'Chemistry')
+    ],
+    names=['Department', 'Branch']
+)
+print(index)`,
+    S`
+MultiIndex([('Engineering',       'CSE'),
+            ('Engineering',       'ECE'),
+            (    'Science',   'Physics'),
+            (    'Science', 'Chemistry')],
+           names=['Department', 'Branch'])`),
+  P('DataFrame with a MultiIndex','To create a DataFrame whose rows use a hierarchical index.',
+    ['Create a dictionary with year columns.','Pass index=index to pd.DataFrame().','Print the DataFrame.'],
+    S`
+data = pd.DataFrame(
+    {
+        '2025': [85, 78, 92, 88],
+        '2026': [90, 82, 95, 91]
+    },
+    index=index
+)
+print(data)`,
+    S`
+                       2025  2026
+Department  Branch               
+Engineering CSE          85    90
+            ECE          78    82
+Science     Physics      92    95
+            Chemistry    88    91`),
+  P('Reshaping with unstack and stack','To move an index level into columns (unstack) and back (stack).',
+    ['Call data.unstack() to pivot the inner level.','Call stack() to bring it back.','Observe NaN introduced by the pivot.'],
+    S`
+unstacked_data = data.unstack()
+print(unstacked_data)
+
+stacked_data = unstacked_data.stack()
+print(stacked_data)`,
+    S`
+             2025                  ...      2026              
+Branch        CSE Chemistry   ECE  ... Chemistry   ECE Physics
+Department                         ...                        
+Engineering  85.0       NaN  78.0  ...       NaN  82.0     NaN
+Science       NaN      88.0   NaN  ...      91.0   NaN    95.0
+
+[2 rows x 8 columns]
+                       2025  2026
+Department  Branch               
+Engineering CSE        85.0  90.0
+            Chemistry   NaN   NaN
+            ECE        78.0  82.0
+            Physics     NaN   NaN
+Science     CSE         NaN   NaN
+            Chemistry  88.0  91.0
+            ECE         NaN   NaN
+            Physics    92.0  95.0`)
+ ])},
+
+{id:'exp-05',number:'05',title:'Data Visualization with Matplotlib and Seaborn',
+ description:'Visualize data with Matplotlib and Seaborn using line, bar, histogram, scatter and box plots.',
+ overview:'Plots reveal patterns that tables hide. Starting with the Iris dataset, this experiment builds line plots with annotations, grouped and stacked bar charts, histograms with density curves, scatter plots with correlation, and box plots by category. Plot images can be attached to each part (see the Output panel).',
+ tools:['Python','Pandas','NumPy','Matplotlib','Seaborn'],difficulty:'Intermediate',
+ setup:T(S`
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+URL = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+df = pd.read_csv(URL)
+
+print("First Five records:")
+print(df.head())
+print("\nData information:")
+print(df.info())
+print("\nStatistical information:")
+print(df.describe())
+
+plt.figure(figsize=(8, 5))
+plt.plot(df.index, df["sepal_length"], label="sepal_length")
+plt.plot(df.index, df["petal_length"], label="petal_length")
+plt.xlabel("Sample index")
+plt.ylabel("Length")
+plt.legend(); plt.grid(); plt.show()
+
+sns.scatterplot(data=df, x="sepal_length", y="petal_length", hue="species")
+sns.histplot(data=df, x="sepal_length", hue="species", kde=True)
+sns.boxplot(data=df, x="species", y="petal_length")
+sns.pairplot(df, hue="species")`),
+ setupOut:T(S`
+First Five records:
+   sepal_length  sepal_width  petal_length  petal_width species
+0           5.1          3.5           1.4          0.2  setosa
+1           4.9          3.0           1.4          0.2  setosa
+2           4.7          3.2           1.3          0.2  setosa
+3           4.6          3.1           1.5          0.2  setosa
+4           5.0          3.6           1.4          0.2  setosa
+
+Data information:
+RangeIndex: 150 entries, 0 to 149
+Data columns (total 5 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   sepal_length  150 non-null    float64
+ 1   sepal_width   150 non-null    float64
+ 2   petal_length  150 non-null    float64
+ 3   petal_width   150 non-null    float64
+ 4   species       150 non-null    str    
+dtypes: float64(4), str(1)
+memory usage: 6.0 KB
+None
+
+Statistical information:
+       sepal_length  sepal_width  petal_length  petal_width
+count    150.000000   150.000000    150.000000   150.000000
+mean       5.843333     3.057333      3.758000     1.199333
+std        0.828066     0.435866      1.765298     0.762238
+min        4.300000     2.000000      1.000000     0.100000
+25%        5.100000     2.800000      1.600000     0.300000
+50%        5.800000     3.000000      4.350000     1.300000
+75%        6.400000     3.300000      5.100000     1.800000
+max        7.900000     4.400000      6.900000     2.500000`),
+ subs:mkSubs([
+  P('Line plots with subplots and annotations','To plot monthly sales and expenses in two subplots with legends, grids and annotations.',
+    ['Create two lists for sales and expenses.','Use plt.subplots(2, 1) and plot each series.','Add titles, labels, annotations, legend and grid; save the figure.'],
+    S`
+import matplotlib.pyplot as plt
+
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+sales = [120, 150, 180, 160, 220, 250]
+expenses = [80, 100, 120, 110, 140, 160]
+
+fig, ax = plt.subplots(2, 1, figsize=(10, 8))
+ax[0].plot(months, sales, marker="o", linewidth=2, label="Sales")
+ax[0].set_title("Monthly Sales")
+ax[0].set_xlabel("Month")
+ax[0].set_ylabel("Sales")
+ax[0].annotate("Highest Sales", xy=(5, 250), xytext=(3, 270), arrowprops=dict(arrowstyle="->"))
+ax[0].legend()
+ax[0].grid(True)
+
+ax[1].plot(months, expenses, marker="s", linewidth=2, label="Expenses")
+ax[1].set_title("Monthly Expenses")
+ax[1].set_xlabel("Month")
+ax[1].set_ylabel("Expenses")
+ax[1].annotate("Highest Expense", xy=(5, 160), xytext=(3.5, 180), arrowprops=dict(arrowstyle="->"))
+ax[1].legend()
+ax[1].grid(True)
+
+fig.suptitle("Monthly Sales and Expenses Analysis", fontsize=16)
+plt.tight_layout()
+plt.savefig("monthly_sales_expenses.png", dpi=300, bbox_inches="tight")
+plt.show()`,
+    S`
+Figure saved as monthly_sales_expenses.png
+(two stacked line plots: Monthly Sales and Monthly Expenses)`,true),
+  P('Grouped and stacked bar charts','To compare student marks across subjects using grouped and stacked bars.',
+    ['Create a DataFrame of marks for four students.','Plot a grouped bar chart with df.plot(kind="bar").','Plot a stacked bar chart with stacked=True.'],
+    S`
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = {'Pandas': [87, 94, 66, 99], 'numpy': [65, 59, 80, 85], 'html': [88, 76, 90, 90]}
+df = pd.DataFrame(data, index=['Student1', 'Student2', 'Student3', 'Student4'])
+print("DataFrame:")
+print(df)
+
+df.plot(kind='bar', figsize=(8, 5))
+plt.title("Student Marks in Different Programming Languages")
+plt.xlabel("Students"); plt.ylabel("Marks")
+plt.xticks(rotation=0); plt.legend(title="Subjects")
+plt.tight_layout(); plt.show()
+
+df.plot(kind='bar', stacked=True, figsize=(8, 5))
+plt.title("Stacked Bar Plot of Student Marks")
+plt.tight_layout(); plt.show()`,
+    S`
+DataFrame:
+          Pandas  numpy  html
+Student1      87     65    88
+Student2      94     59    76
+Student3      66     80    90
+Student4      99     85    90`,true),
+  P('Histogram and density plot','To visualise the distribution of marks with a histogram and a KDE density curve.',
+    ['Create a list of 20 marks and a DataFrame.','Draw sns.histplot() with 6 bins.','Draw sns.kdeplot() with fill=True.'],
+    S`
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = [54, 57, 67, 55, 58, 99, 62, 98, 68, 85,
+        72, 77, 67, 80, 90, 85, 57, 90, 75, 95]
+df = pd.DataFrame({'Marks': data})
+print("Observed Data:")
+print(df)
+
+plt.figure(figsize=(8, 5))
+sns.histplot(df['Marks'], bins=6, kde=False)
+plt.title("Histogram of Marks"); plt.xlabel("Marks"); plt.ylabel("Frequency")
+plt.show()
+
+plt.figure(figsize=(8, 5))
+sns.kdeplot(df['Marks'], fill=True)
+plt.title("Density Plot of Marks")
+plt.show()`,
+    S`
+Observed Data:
+    Marks
+0      54
+1      57
+2      67
+3      55
+4      58
+5      99
+6      62
+7      98
+8      68
+9      85
+10     72
+11     77
+12     67
+13     80
+14     90
+15     85
+16     57
+17     90
+18     75
+19     95`,true),
+  P('Scatter plot and correlation','To study the relationship between study hours and marks.',
+    ['Create study_hours and marks lists.','Draw plt.scatter().','Compute the correlation with Series.corr().'],
+    S`
+import pandas as pd
+import matplotlib.pyplot as plt
+
+study_hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+marks = [54, 57, 67, 55, 58, 99, 62, 98, 68, 85]
+df = pd.DataFrame({'Study_Hours': study_hours, 'Marks': marks})
+print("Data:")
+print(df)
+
+plt.figure(figsize=(8, 5))
+plt.scatter(df['Study_Hours'], df['Marks'])
+plt.title("Relationship Between Study Hours and Marks")
+plt.xlabel("Study Hours"); plt.ylabel("Marks"); plt.grid(True)
+plt.show()
+
+correlation = df['Study_Hours'].corr(df['Marks'])
+print("\nCorrelation Coefficient:", round(correlation, 2))`,
+    S`
+Data:
+   Study_Hours  Marks
+0            1     54
+1            2     57
+2            3     67
+3            4     55
+4            5     58
+5            6     99
+6            7     62
+7            8     98
+8            9     68
+9           10     85
+
+Correlation Coefficient: 0.6`,true),
+  P('Box plot by department','To compare the spread of marks across departments using a box plot.',
+    ['Create a DataFrame with Department and Marks.','Draw sns.boxplot(x="Department", y="Marks").','Add title, labels and grid.'],
+    S`
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = {
+    'Department': ['CS', 'CS', 'DS', 'ECE', 'DS', 'ECE', 'EEE', 'EEE', 'IT', 'EEE', 'EEE'],
+    'Marks': [78, 85, 90, 72, 88, 65, 70, 82, 75, 80, 60]}
+df = pd.DataFrame(data)
+print("Data:")
+print(df)
+
+plt.figure(figsize=(8, 5))
+sns.boxplot(x='Department', y='Marks', data=df)
+plt.title("Marks Distribution by Department")
+plt.grid(axis='y', linestyle='--', alpha=0.5)
+plt.show()`,
+    S`
+Data:
+   Department  Marks
+0          CS     78
+1          CS     85
+2          DS     90
+3         ECE     72
+4          DS     88
+5         ECE     65
+6         EEE     70
+7         EEE     82
+8          IT     75
+9         EEE     80
+10        EEE     60`,true)
+ ])}
+];
+
+const MODULES=[
+ {id:'mod-1',n:1,title:'Introduction to Data Science and Python',pages:8,url:'',topics:['Data Science lifecycle','Python basics for data work','Jupyter Notebook workflow','Libraries overview'],ref:'Exp 1'},
+ {id:'mod-2',n:2,title:'Data Acquisition: Files, APIs and Databases',pages:10,url:'',topics:['CSV, TXT, JSON and Excel I/O','REST APIs with requests','SQLite and SQL basics','Reading SQL into pandas'],ref:'Exp 1, 2'},
+ {id:'mod-3',n:3,title:'Data Cleaning and Transformation',pages:9,url:'',topics:['Missing values','Encoding categories','Renaming and mapping','Boolean masking'],ref:'Exp 3'},
+ {id:'mod-4',n:4,title:'Hierarchical Indexing and Reshaping',pages:7,url:'',topics:['MultiIndex creation','Selection with loc','stack and unstack','Pivot ideas'],ref:'Exp 4'},
+ {id:'mod-5',n:5,title:'Data Visualization',pages:12,url:'',topics:['Matplotlib figures and axes','Bar, line and scatter plots','Histogram and KDE','Seaborn box and pair plots'],ref:'Exp 5'}
+];
+
+const TOOLS=[
+ {id:'python',name:'Python',cat:'Programming',desc:'General-purpose language used for every experiment in this lab.',site:'https://www.python.org/',docs:'https://docs.python.org/3/',install:'Download from python.org and tick "Add Python to PATH".',usage:S`print("Hello, Data Science!")`},
+ {id:'jupyter',name:'Jupyter Notebook',cat:'Programming',desc:'Interactive notebooks that mix code, output and notes.',site:'https://jupyter.org/',docs:'https://docs.jupyter.org/',install:'pip install notebook',usage:S`jupyter notebook`},
+ {id:'anaconda',name:'Anaconda',cat:'Programming',desc:'Distribution bundling Python, Jupyter and common data libraries.',site:'https://www.anaconda.com/',docs:'https://docs.anaconda.com/',install:'Download the installer from anaconda.com.',usage:S`conda create -n dslab python=3.11
+conda activate dslab`},
+ {id:'numpy',name:'NumPy',cat:'Data Processing',desc:'Fast n-dimensional arrays and random number generation.',site:'https://numpy.org/',docs:'https://numpy.org/doc/',install:'pip install numpy',usage:S`import numpy as np
+print(np.random.rand(3, 2))`},
+ {id:'pandas',name:'Pandas',cat:'Data Processing',desc:'DataFrames for loading, cleaning, reshaping and analysing data.',site:'https://pandas.pydata.org/',docs:'https://pandas.pydata.org/docs/',install:'pip install pandas',usage:S`import pandas as pd
+df = pd.read_csv("data.csv")
+print(df.head())`},
+ {id:'openpyxl',name:'openpyxl',cat:'Data Processing',desc:'Engine that lets pandas read and write .xlsx Excel files.',site:'https://openpyxl.readthedocs.io/',docs:'https://openpyxl.readthedocs.io/en/stable/',install:'pip install openpyxl',usage:S`df.to_excel("out.xlsx", index=False)`},
+ {id:'matplotlib',name:'Matplotlib',cat:'Visualization',desc:'Core plotting library for line, bar, scatter and more.',site:'https://matplotlib.org/',docs:'https://matplotlib.org/stable/index.html',install:'pip install matplotlib',usage:S`import matplotlib.pyplot as plt
+plt.plot([1, 2, 3], [2, 4, 9])
+plt.show()`},
+ {id:'seaborn',name:'Seaborn',cat:'Visualization',desc:'Statistical plots such as histograms, KDE, box and pair plots.',site:'https://seaborn.pydata.org/',docs:'https://seaborn.pydata.org/tutorial.html',install:'pip install seaborn',usage:S`import seaborn as sns
+sns.boxplot(data=df, x="species", y="petal_length")`},
+ {id:'requests',name:'Requests',cat:'Data Access',desc:'Simple HTTP library for calling web APIs.',site:'https://requests.readthedocs.io/',docs:'https://requests.readthedocs.io/en/latest/',install:'pip install requests',usage:S`import requests
+r = requests.get("https://api.github.com")
+print(r.status_code)`},
+ {id:'sqlite',name:'SQLite',cat:'Data Access',desc:'Lightweight file-based SQL database built into Python (sqlite3).',site:'https://www.sqlite.org/',docs:'https://www.sqlite.org/docs.html',install:'Included with Python (import sqlite3).',usage:S`import sqlite3
+conn = sqlite3.connect("students.db")`},
+ {id:'vscode',name:'VS Code',cat:'Development',desc:'Code editor with Python and Jupyter extensions.',site:'https://code.visualstudio.com/',docs:'https://code.visualstudio.com/docs',install:'Download from code.visualstudio.com.',usage:S`code .`},
+ {id:'git',name:'Git',cat:'Development',desc:'Version control to track changes in your lab code.',site:'https://git-scm.com/',docs:'https://git-scm.com/doc',install:'Download from git-scm.com.',usage:S`git init
+git add .
+git commit -m "Lab experiments"`},
+ {id:'github',name:'GitHub',cat:'Development',desc:'Hosting platform for sharing your repositories.',site:'https://github.com/',docs:'https://docs.github.com/',install:'Create a free account on github.com.',usage:S`git remote add origin <your-repo-url>
+git push -u origin main`}
+];
+
+/* ==========================================================
+   3. ICONS & UTILITIES
+   ========================================================== */
+const ICONS={
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',plus:'<path d="M12 5v14M5 12h14"/>',
+ edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+ trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
+ copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+ play:'<path d="m6 4 14 8-14 8z"/>',check:'<path d="m5 12 5 5L20 7"/>',
+ globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>',
+ linkedin:'<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>',
+ github:'<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7a5.2 5.2 0 0 0-1.4-3.6 4.9 4.9 0 0 0-.1-3.6s-1.1-.3-3.7 1.4a12.8 12.8 0 0 0-6.7 0C6.7 2.8 5.6 3.1 5.6 3.1a4.9 4.9 0 0 0-.1 3.6A5.2 5.2 0 0 0 4 10.3c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V22"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+ download:'<path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/>',upload:'<path d="M12 15V3m0 0-4 4m4-4 4 4M4 21h16"/>',
+ external:'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/>',
+ zin:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/>',zout:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M8 11h6"/>',
+ full:'<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>',
+ left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',menu:'<path d="M3 6h18M3 12h18M3 18h18"/>',
+ info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
+ book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V22h16"/>',
+ flask:'<path d="M9 3h6M10 3v6L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-6-10V3"/>',
+ wrench:'<path d="M14.7 6.3a4 4 0 0 1 5 5l-9 9a2.1 2.1 0 0 1-3-3z"/><path d="m14.7 6.3-3.7 3.7"/>',file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"/>'
+};
+const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||''}</svg>`;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const isPH=u=>!u||String(u).trim().startsWith('[');
+const hasUrl=u=>!!u&&!isPH(u);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function toast(msg,bad){const t=document.createElement('div');t.className='toast'+(bad?' bad':'');t.textContent=msg;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),3200);}
+function hl(t,q){const w=q.trim().split(/\s+/).filter(Boolean).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));if(!w.length)return esc(t);return String(t).split(new RegExp('('+w.join('|')+')','ig')).map((p,i)=>i%2?`<mark>${esc(p)}</mark>`:esc(p)).join('');}
+const badgeColors=['#5b2a86','#e0592a','#7c3aed','#b45309','#be3455','#2f6f4f'];
+
+/* ==========================================================
+   4. STORE (localStorage with in-memory fallback)
+   ========================================================== */
+const KEY='dslab:v1:experiments',DKEY='dslab:v1:done',mem={};
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return mem[k]!=null?mem[k]:null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){mem[k]=v;return false;}}
+let EXPS=(()=>{try{const s=lsGet(KEY),a=s&&JSON.parse(s);if(Array.isArray(a))return a;}catch(e){}return clone(DEFAULTS);})();
+let DONE=(()=>{try{return JSON.parse(lsGet(DKEY)||'{}')||{};}catch(e){return {};}})();
+const saveExps=()=>{const ok=lsSet(KEY,JSON.stringify(EXPS));if(!ok)toast('Saved in memory only (browser storage unavailable or full).',true);return ok;};
+const saveDone=()=>lsSet(DKEY,JSON.stringify(DONE));
+const getExp=id=>EXPS.find(e=>e.id===id);
+const isDone=(e,s)=>!!(DONE[e]&&DONE[e][s]);
+function stats(){const subs=EXPS.reduce((n,e)=>n+e.subs.length,0),done=EXPS.reduce((n,e)=>n+e.subs.filter(s=>isDone(e.id,s.id)).length,0);return{exps:EXPS.length,subs,done,pct:subs?Math.round(done*100/subs):0};}
+
+/* ==========================================================
+   5. COMPONENTS
+   ========================================================== */
+const THUMBS=[
+ '<svg viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="2"><rect x="10" y="10" width="100" height="64" rx="6" fill="#fff"/><rect x="10" y="10" width="100" height="16" rx="6" fill="currentColor" opacity=".18"/><path d="M10 42h100M10 58h100M45 10v64M80 10v64" opacity=".5"/></svg>',
+ '<svg viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="24" width="34" height="36" rx="7" fill="#fff"/><rect x="78" y="24" width="34" height="36" rx="7" fill="#fff"/><path d="M46 36h28m-6-6 6 6-6 6M74 50H46m6-6-6 6 6 6"/></svg>',
+ '<svg viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="2"><rect x="14" y="40" width="16" height="34" rx="3" fill="currentColor" opacity=".3"/><rect x="40" y="22" width="16" height="52" rx="3" fill="currentColor" opacity=".3"/><rect x="66" y="48" width="16" height="26" rx="3" stroke-dasharray="4 3" fill="#fff"/><rect x="92" y="30" width="16" height="44" rx="3" fill="currentColor" opacity=".3"/></svg>',
+ '<svg viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="2"><rect x="45" y="6" width="30" height="16" rx="4" fill="#fff"/><path d="M60 22v10M25 32h70M25 32v10M60 32v10M95 32v10"/><rect x="10" y="42" width="30" height="16" rx="4" fill="#fff"/><rect x="45" y="42" width="30" height="16" rx="4" fill="#fff"/><rect x="80" y="42" width="30" height="16" rx="4" fill="#fff"/><path d="M25 58v8M60 58v8M95 58v8"/></svg>',
+ '<svg viewBox="0 0 120 84" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 72h98M12 12v60"/><rect x="24" y="46" width="12" height="26" fill="currentColor" opacity=".3"/><rect x="46" y="30" width="12" height="42" fill="currentColor" opacity=".3"/><rect x="68" y="38" width="12" height="34" fill="currentColor" opacity=".3"/><path d="m24 40 22-16 22 8 30-22"/></svg>'
+];
+const logoSVG='DS';
+function header(active){
+  const nav=[['home','HOME','#/'],['modules','MODULES','#/modules'],['exp','EXP','#/experiments'],['tools','TOOLS','#/tools']];
+  return `<header class="hdr"><div class="wrap hdr-in">
+   <a class="brand" href="#/" aria-label="${esc(CONFIG.portal.name)} home"><span class="logo">${logoSVG}</span><span class="brand-t"><b>${esc(CONFIG.portal.name)}</b><small>${esc(CONFIG.portal.university)}</small></span></a>
+   <nav id="nav" class="nav" aria-label="Main">${nav.map(n=>`<a href="${n[2]}" ${active===n[0]?'class="on" aria-current="page"':''}>${n[1]}</a>`).join('')}</nav>
+   <div class="hdr-r"><button class="icon-btn" data-act="search" aria-label="Search (Ctrl+K)" title="Search (Ctrl+K)">${ic('search')}</button><button class="icon-btn menu" data-act="menu" aria-label="Open menu" aria-expanded="false">${ic('menu')}</button></div>
+  </div></header>`;
+}
+function footer(){
+  const s=CONFIG.student.socials;
+  return `<footer class="ftr"><div class="wrap ftr-in"><div><b>${esc(CONFIG.portal.name)}</b><br><small>${esc(CONFIG.portal.university)} · ${esc(CONFIG.student.subject)}</small></div>
+  <nav aria-label="Footer"><a href="#/">Home</a><a href="#/modules">Modules</a><a href="#/experiments">Exp</a><a href="#/tools">Tools</a></nav>
+  <div class="socials" style="margin:0">${s.map(socBtn).join('')}</div>
+  <small>© ${esc(CONFIG.portal.year)} ${esc(CONFIG.portal.university)}</small></div></footer>`;
+}
+function crumbs(list){return `<nav class="crumbs" aria-label="Breadcrumb">${list.map((c,i)=>(i?'<span>/</span>':'')+(c[1]?`<a href="${c[1]}">${esc(c[0])}</a>`:`<b aria-current="page">${esc(c[0])}</b>`)).join('')}</nav>`;}
+function socBtn(s){
+  const icon={web:'globe',linkedin:'linkedin',github:'github',other:'link'}[s.id]||'link';
+  return isPH(s.url)?`<span class="soc disabled" title="Add your URL in CONFIG" aria-label="${esc(s.label)} (not set)" role="img">${ic(icon,19)}</span>`
+   :`<a class="soc" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer" title="${esc(s.label)}" aria-label="${esc(s.label)}">${ic(icon,19)}</a>`;
+}
+function profileCard(){
+  const s=CONFIG.student,ini=s.name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  return `<div class="card profile" style="padding-top:0;overflow:hidden"><div style="height:64px;margin:0 -20px 0;background:linear-gradient(120deg,var(--pri),var(--pri2) 60%,var(--acc))"></div><div class="avatar" style="margin-top:-52px">${s.photoUrl?`<img src="${esc(s.photoUrl)}" alt="${esc(s.name)}">`:esc(ini)}</div>
+  <dl class="kv"><dt>Name</dt><dd>${esc(s.name)}</dd><dt>Roll</dt><dd>${esc(s.rollNumber)}</dd><dt>Sec</dt><dd>${esc(s.section)}</dd><dt>Sub</dt><dd>${esc(s.subject)}</dd><dt>Faculty</dt><dd>${esc(s.faculty)}</dd><dt>Designation</dt><dd>${esc(s.designation)}</dd></dl>
+  <div class="socials" aria-label="Social links">${s.socials.map(socBtn).join('')}</div>
+  <button class="btn btn-pri" style="width:100%" data-act="add">${ic('plus')} Add Experiment</button></div>`;
+}
+function expCard(e,i){
+  return `<article class="card exp-card"><div class="exp-top"><div class="thumb" aria-hidden="true">${THUMBS[i%THUMBS.length]}</div>
+   <div><div class="eyebrow">EXP-${esc(e.number)}</div><h3>${esc(e.title)}</h3></div></div>
+   <p>${esc(e.description)}</p>
+   <div>${e.tools.map(t=>`<span class="chip">${esc(t)}</span>`).join('')}<span class="chip d">${esc(e.difficulty)}</span></div>
+   <div class="exp-foot"><a class="btn btn-pri btn-sm" href="#/experiments/${esc(e.id)}">Overview ${ic('right',14)}</a>
+    <div class="dots">${e.subs.map(s=>`<a class="dot ${isDone(e.id,s.id)?'done':''}" href="#/experiments/${esc(e.id)}/${s.id}" title="Part ${s.id}: ${esc(s.title)}" aria-label="Part ${s.id}: ${esc(s.title)}">${s.id}</a>`).join('')}</div>
+    <div class="acts"><button class="btn btn-sm btn-ico" data-act="edit" data-id="${esc(e.id)}" aria-label="Edit experiment ${esc(e.number)}" title="Edit">${ic('edit',15)}</button><button class="btn btn-sm btn-ico btn-danger" data-act="del" data-id="${esc(e.id)}" aria-label="Delete experiment ${esc(e.number)}" title="Delete">${ic('trash',15)}</button></div></div></article>`;
+}
+function editorHTML(code){return `<div class="ed"><pre class="gut" id="gutter" aria-hidden="true">1</pre><textarea id="code" class="code" spellcheck="false" wrap="off" aria-label="Code editor">${esc(code)}</textarea></div>`;}
+function initEditor(){
+  const ta=$('#code'),g=$('#gutter');if(!ta)return;
+  const upd=()=>{const n=ta.value.split('\n').length;g.textContent=Array.from({length:n},(_,i)=>i+1).join('\n');};
+  ta.addEventListener('input',upd);ta.addEventListener('scroll',()=>{g.scrollTop=ta.scrollTop;});
+  ta.addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey&&!e.ctrlKey&&!e.altKey){e.preventDefault();ta.setRangeText('    ',ta.selectionStart,ta.selectionEnd,'end');upd();}});
+  upd();
+}
+
+/* ==========================================================
+   6. SEARCH ENGINE
+   ========================================================== */
+function buildIndex(){
+  const a=[];
+  EXPS.forEach(e=>{a.push({cat:'EXPERIMENT',title:e.title,sub:'Exp '+e.number,href:'#/experiments/'+e.id,hay:[e.description,e.overview,e.tools.join(' ')].join(' ')});
+    e.subs.forEach(s=>a.push({cat:'SUB-EXPERIMENT',title:s.title,sub:`Exp ${e.number} · Part ${s.id}`,href:`#/experiments/${e.id}/${s.id}`,hay:s.aim+' '+s.code}));});
+  MODULES.forEach(m=>a.push({cat:'MODULE',title:m.title,sub:'Module '+m.n,href:'#/modules/'+m.id,hay:m.topics.join(' ')}));
+  TOOLS.forEach(t=>a.push({cat:'TOOL',title:t.name,sub:t.cat,href:'#/tools/'+t.id,hay:t.desc}));
+  return a;
+}
+function search(q){
+  const k=q.toLowerCase().split(/\s+/).filter(Boolean);if(!k.length)return[];
+  return buildIndex().map(it=>{const t=it.title.toLowerCase(),h=(it.hay||'').toLowerCase();let sc=0;for(const w of k){if(t.includes(w))sc+=3;else if(h.includes(w))sc+=1;else return null;}return{it,sc};})
+    .filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,12).map(x=>x.it);
+}
+function bindSearch(input,box,done){
+  let items=[],act=-1,timer;
+  const mark=()=>{const els=$$('.res',box);els.forEach((a,i)=>{a.classList.toggle('on',i===act);a.setAttribute('aria-selected',String(i===act));});input.setAttribute('aria-activedescendant',act>=0?`${box.id}-o${act}`:'');if(els[act])els[act].scrollIntoView({block:'nearest'});};
+  const draw=()=>{const q=input.value.trim();items=search(q);act=items.length?0:-1;
+    if(!q){box.hidden=true;input.setAttribute('aria-expanded','false');return;}
+    box.hidden=false;input.setAttribute('aria-expanded','true');
+    box.innerHTML=items.length?items.map((it,i)=>`<a role="option" id="${box.id}-o${i}" href="${it.href}" class="res ${i===act?'on':''}" aria-selected="${i===act}"><span class="tag">${it.cat}</span><span class="res-t">${hl(it.title,q)}</span><span class="res-s">${esc(it.sub)}</span></a>`).join(''):'<div class="empty sm">No results found. Try another search.</div>';
+    input.setAttribute('aria-activedescendant',act>=0?`${box.id}-o0`:'');};
+  input.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(draw,120);});
+  input.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'&&items.length){e.preventDefault();act=(act+1)%items.length;mark();}
+    else if(e.key==='ArrowUp'&&items.length){e.preventDefault();act=(act-1+items.length)%items.length;mark();}
+    else if(e.key==='Enter'&&act>=0&&items[act]){e.preventDefault();location.hash=items[act].href;if(done)done();}
+    else if(e.key==='Escape'&&input.value){e.stopPropagation();input.value='';box.hidden=true;}});
+  box.addEventListener('click',e=>{if(e.target.closest('a')&&done)done();});
+}
+function openSearch(){
+  if($('#sov'))return;
+  const d=document.createElement('div');d.id='sov';d.className='modal-bg';
+  d.innerHTML=`<div class="modal sm" role="dialog" aria-modal="true" aria-label="Search"><div class="searchbox">${ic('search')}<label class="sr" for="gq">Search</label><input id="gq" class="q" placeholder="Search experiments, modules, tools..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="gres" aria-autocomplete="list"><button class="clear" data-act="clearq" aria-label="Clear search">${ic('x',16)}</button><div id="gres" class="results static" role="listbox" hidden></div></div></div>`;
+  document.body.appendChild(d);const i=$('#gq');bindSearch(i,$('#gres'),closeSearch);i.focus();
+  d.addEventListener('mousedown',e=>{if(e.target===d)closeSearch();});
+}
+function closeSearch(){const d=$('#sov');if(d)d.remove();}
+
+/* ==========================================================
+   7. SANDBOX ENGINE (honest demo mode, backend-ready)
+   ========================================================== */
+let CUR=null;
+function syntaxCheck(code){
+  if(!code.trim())return[{line:1,text:'Code is empty.'}];
+  const msgs=[],pairs={')':'(',']':'[','}':'{'},stack=[];let i=0,line=1,str=null;
+  while(i<code.length){
+    const c=code[i],t3=code.substr(i,3);
+    if(str){
+      if(str.length===3){if(t3===str){str=null;i+=3;continue;}}
+      else{if(c==='\\'){i+=2;continue;}if(c===str){str=null;}else if(c==='\n'){msgs.push({line,text:'Unterminated string literal.'});str=null;}}
+      if(c==='\n')line++;i++;continue;
+    }
+    if(c==='#'){while(i<code.length&&code[i]!=='\n')i++;continue;}
+    if(t3==='"""'||t3==="'''"){str=t3;i+=3;continue;}
+    if(c==='"'||c==="'"){str=c;i++;continue;}
+    if('([{'.includes(c))stack.push({c,line});
+    else if(')]}'.includes(c)){const top=stack.pop();if(!top||top.c!==pairs[c])msgs.push({line,text:`Unmatched '${c}'.`});}
+    if(c==='\n')line++;i++;
+  }
+  if(str)msgs.push({line,text:'Unterminated string literal.'});
+  stack.forEach(s=>msgs.push({line:s.line,text:`'${s.c}' was never closed.`}));
+  code.split('\n').forEach((l,n)=>{if(/^(\t+ +| +\t)/.test(l))msgs.push({line:n+1,text:'Mixed tabs and spaces in indentation.'});});
+  return msgs;
+}
+function plotSlot(c){
+  if(!c.plot)return '';
+  if(c.image)return `<div class="plot"><img src="${esc(c.image)}" alt="Plot output">${uploadBtn('Replace image')}</div>`;
+  return `<div class="plot"><div class="plot-ph">${ic('file',26)}<p><b>Plot image not added yet</b><br>Attach the PNG saved from your notebook.</p>${uploadBtn('Upload plot PNG')}</div></div>`;
+}
+const uploadBtn=t=>`<button class="btn btn-sm" data-act="upload">${ic('upload',15)} ${t}</button>`;
+function outputHTML(c,note){return `<div class="demo">${ic('info',15)} ${note||'Saved output from the notebook run.'} Demo mode: code is not executed in the browser.</div><pre class="outtext">${esc(c.out)}</pre>${plotSlot(c)}`;}
+async function sbRun(){
+  const out=$('#out'),ta=$('#code');if(!out||!ta)return;
+  $$('[data-act=run],[data-act=compile]').forEach(b=>b.disabled=true);
+  out.className='out';out.innerHTML='<span class="spin"></span> Running…';
+  await sleep(500);
+  try{
+    if(CONFIG.sandbox.backendUrl){
+      const r=await fetch(CONFIG.sandbox.backendUrl+'/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:ta.value,language:'python'})});
+      const j=await r.json();
+      out.className='out'+(j.stderr?' err':'');
+      out.innerHTML=`<pre class="outtext">${esc((j.stdout||'')+(j.stderr?'\n'+j.stderr:''))}</pre>`;
+    }else{
+      const errs=syntaxCheck(ta.value);
+      if(errs.length){out.className='out err';out.innerHTML=`<pre class="outtext err-l">SyntaxError (basic check)\n${errs.map(e=>`  line ${e.line}: ${esc(e.text)}`).join('\n')}</pre>`;}
+      else{const edited=ta.value.trim()!==CUR.code.trim();out.innerHTML=outputHTML(CUR,edited?'Code was edited, but this demo can only show the original saved output.':'Run complete. Showing saved output.');}
+    }
+  }catch(e){out.className='out err';out.innerHTML=`<pre class="outtext err-l">Error: ${esc(e.message)}</pre>`;}
+  $$('[data-act=run],[data-act=compile]').forEach(b=>b.disabled=false);
+}
+async function sbCompile(){
+  const out=$('#out'),ta=$('#code');if(!out||!ta)return;
+  $$('[data-act=run],[data-act=compile]').forEach(b=>b.disabled=true);
+  out.className='out';out.innerHTML='<span class="spin"></span> Checking…';await sleep(350);
+  const errs=syntaxCheck(ta.value);
+  out.className='out'+(errs.length?' err':'');
+  out.innerHTML=errs.length?`<pre class="outtext err-l">Basic check found ${errs.length} problem(s):\n${errs.map(e=>`  line ${e.line}: ${esc(e.text)}`).join('\n')}</pre>`
+    :`<pre class="outtext ok-l">✓ Basic syntax check passed (brackets, quotes, indentation).</pre><div class="demo" style="margin-top:10px">${ic('info',15)} This is a simple client-side check, not a real Python compiler.</div>`;
+  $$('[data-act=run],[data-act=compile]').forEach(b=>b.disabled=false);
+}
+function sbReset(){const ta=$('#code');if(!ta)return;ta.value=CUR.code;ta.dispatchEvent(new Event('input'));$('#out').className='out';$('#out').innerHTML=outputHTML(CUR);toast('Code reset to original.');}
+async function copyText(t){try{await navigator.clipboard.writeText(t);}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(_){}a.remove();}toast('Copied to clipboard');}
+
+/* ==========================================================
+   8. PAGES
+   ========================================================== */
+function notFound(msg){return{title:'404',active:'',html:`<div class="wrap"><div class="card" style="text-align:center;padding:60px 20px"><div class="eyebrow">404</div><h1 id="h1" tabindex="-1">Page Not Found</h1><p class="lead" style="margin:10px auto 20px">${esc(msg||'The page you are looking for does not exist.')}</p><a class="btn btn-pri" href="#/">Return Home</a></div></div>`};}
+
+function pageHome(){
+  const st=stats();
+  const done=st.pct;
+  return{title:'Home',active:'home',html:`<div class="wrap home">
+   <section class="hero">
+    <div class="hero-intro">
+      <div class="home-welcome">Digital Laboratory · ${esc(CONFIG.portal.year)}</div>
+      <p class="eyebrow">${esc(CONFIG.portal.university)} · ${esc(CONFIG.student.subject)}</p>
+      <h1 id="h1" tabindex="-1">Learn. Experiment.<br>Build with Data.</h1>
+      <p class="lead">Your personal Data Science lab dashboard — explore experiments, practise Python, review outputs and track your progress from one place.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#/experiments">${ic('play',16)} Start experimenting</a>
+        <a class="btn" href="#/modules">${ic('book',16)} Study modules</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>${st.exps}</b><span>Experiments</span></div>
+        <div class="stat"><b>${st.subs}</b><span>Lab Parts</span></div>
+        <div class="stat"><b>${done}%</b><span>Progress</span></div>
+      </div>
+    </div>
+   </section>
+
+   <aside class="aside" aria-label="Student profile">${profileCard()}</aside>
+  </div>`};
+}
+
+function pageExpList(){
+  const tools=[...new Set(EXPS.flatMap(e=>e.tools))].sort();
+  return{title:'Experiments',active:'exp',html:`<div class="wrap">${crumbs([['Home','#/'],['Experiments']])}
+   <div class="sec-h"><div><h1 id="h1" tabindex="-1">Experiments</h1><p class="muted" id="count"></p></div><button class="btn btn-pri" data-act="add">${ic('plus')} Add Experiment</button></div>
+   <div class="filters"><div class="fld" style="margin:0"><label class="sr" for="fq">Search</label><input id="fq" data-filter placeholder="Search experiments..." autocomplete="off"></div>
+    <div class="fld" style="margin:0"><label class="sr" for="fd">Difficulty</label><select id="fd" data-filter><option value="">All difficulty</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+    <div class="fld" style="margin:0"><label class="sr" for="ft">Tool</label><select id="ft" data-filter><option value="">All tools</option>${tools.map(t=>`<option>${esc(t)}</option>`).join('')}</select></div>
+    <div class="fld" style="margin:0"><label class="sr" for="fs">Sort</label><select id="fs" data-filter><option value="num">Sort: Number</option><option value="title">Sort: Title</option></select></div>
+    <button class="btn" data-act="clearf">Clear</button></div>
+   <section class="featured-next card" style="margin-bottom:22px;padding:20px">
+    <div class="sec-h"><div><h2>Featured experiments</h2><p class="muted" style="font-size:13px;margin:3px 0 0">Start with these practical Data Science experiments.</p></div></div>
+    <div class="grid">${EXPS.slice(0,4).map(expCard).join('')}</div>
+   </section>
+   <div class="sec-h" style="margin-top:6px"><div><h2>All experiments</h2></div></div>
+   <div class="grid" id="list"></div>
+   <div class="tb" style="margin-top:22px"><button class="btn btn-sm" data-act="export">${ic('download',15)} Export JSON</button><button class="btn btn-sm" data-act="import">${ic('upload',15)} Import JSON</button><button class="btn btn-sm btn-danger" data-act="resetdata">${ic('refresh',15)} Reset to defaults</button></div></div>`,
+  after(){drawList();}};
+}
+function drawList(){
+  if(!$('#list'))return;
+  const q=$('#fq').value.toLowerCase(),d=$('#fd').value,t=$('#ft').value,s=$('#fs').value;
+  const r=EXPS.filter(e=>(!q||(e.title+' '+e.description+' '+e.tools.join(' ')+' '+e.number).toLowerCase().includes(q))&&(!d||e.difficulty===d)&&(!t||e.tools.includes(t)));
+  r.sort(s==='title'?(a,b)=>a.title.localeCompare(b.title):(a,b)=>String(a.number).localeCompare(String(b.number),undefined,{numeric:true}));
+  $('#list').innerHTML=r.map(e=>expCard(e,EXPS.indexOf(e))).join('')||'<div class="empty">No experiments found.<br>Try another search.</div>';
+  $('#count').textContent=`${r.length} of ${EXPS.length} experiments`;
+}
+
+function pageExp(id,subId){
+  const e=getExp(id);if(!e)return notFound('Experiment not found.');
+  const sub=subId?e.subs.find(s=>s.id.toLowerCase()===subId.toLowerCase()):null;
+  if(subId&&!sub)return notFound('That part of the experiment does not exist.');
+  let body,codeVal;
+  const seq=[{h:'#/experiments/'+e.id,t:'Overview'}].concat(e.subs.map(s=>({h:`#/experiments/${e.id}/${s.id}`,t:`Part ${s.id}`})));
+  const idx=sub?e.subs.indexOf(sub)+1:0,prev=seq[idx-1],next=seq[idx+1];
+  if(!sub){
+    codeVal=(e.setup?e.setup+'\n\n':'')+e.subs.map(s=>`# ---- Part ${s.id}: ${s.title} ----\n${s.code}`).join('\n\n');
+    const out=(e.setupOut?e.setupOut+'\n\n':'')+e.subs.map(s=>`### Part ${s.id}: ${s.title}\n${s.output}`).join('\n\n');
+    CUR={code:codeVal,out,plot:false,expId:e.id};
+    body=`<div class="card block"><h2>Overview</h2><p>${esc(e.overview||e.description)}</p><div><span class="chip d">${esc(e.difficulty)}</span>${e.tools.map(t=>`<span class="chip">${esc(t)}</span>`).join('')}<span class="chip">${e.subs.length} parts</span></div>
+      <p class="muted" style="margin-top:8px">Use the A–E list to open each part. Run here to see the saved output of every part together.</p></div>`;
+  }else{
+    codeVal=sub.code;CUR={code:sub.code,out:sub.output,plot:sub.plot,image:sub.image,expId:e.id,subId:sub.id};
+    body=`<div class="card block"><h2>Aim</h2><p>${esc(sub.aim)}</p><h2 style="margin-top:14px">Procedure</h2><ol class="steps">${sub.procedure.map(p=>`<li>${esc(p)}</li>`).join('')}</ol></div>`;
+  }
+  const html=`<div class="wrap">${crumbs([['Home','#/'],['Experiments','#/experiments'],['Experiment '+e.number,sub?'#/experiments/'+e.id:null]].concat(sub?[['Part '+sub.id+': '+sub.title]]:[]))}
+   <div class="sec-h"><div><div class="eyebrow">EXP-${esc(e.number)}${sub?' · PART '+sub.id:''}</div><h1 id="h1" tabindex="-1">${esc(sub?sub.title:e.title)}</h1></div>
+    <div class="acts"><button class="btn btn-sm" data-act="edit" data-id="${esc(e.id)}">${ic('edit',15)} Edit</button></div></div>
+   <div class="exp-layout"><div>${body}
+    <div class="card block"><h2>${ic('play',18)} Code</h2>${editorHTML(codeVal)}
+     <div class="tb"><button class="btn btn-pri" data-act="run">${ic('play',15)} Run</button><button class="btn btn-acc" data-act="compile">${ic('check',15)} Compile</button><button class="btn" data-act="reset">${ic('refresh',15)} Reset</button><button class="btn" data-act="copycode">${ic('copy',15)} Copy</button></div>
+     <h2 style="margin:6px 0 8px;font-size:17px">Output</h2><div id="out" class="out" aria-live="polite">${outputHTML(CUR)}</div></div>
+    <div class="pn">${prev?`<a class="btn" href="${prev.h}">${ic('left',15)} ${prev.t}</a>`:'<span></span>'}
+     ${sub?`<button class="btn ${isDone(e.id,sub.id)?'btn-acc':''}" data-act="done" data-exp="${esc(e.id)}" data-sub="${sub.id}">${ic('check',15)} ${isDone(e.id,sub.id)?'Completed':'Mark as complete'}</button>`:''}
+     ${next?`<a class="btn btn-pri" href="${next.h}">${next.t} ${ic('right',15)}</a>`:'<span></span>'}</div></div>
+    <nav class="subnav" aria-label="Experiment parts"><a class="${!sub?'on':''}" href="#/experiments/${esc(e.id)}"><span class="L">${ic('file',13)}</span><span>Overview</span></a>
+     ${e.subs.map(s=>`<a class="${sub&&sub.id===s.id?'on':''}" href="#/experiments/${esc(e.id)}/${s.id}" ${sub&&sub.id===s.id?'aria-current="page"':''}><span class="L">${s.id}</span><span>${esc(s.title)}</span>${isDone(e.id,s.id)?`<span class="tk">${ic('check',14)}</span>`:''}</a>`).join('')}</nav></div></div>`;
+  return{title:`Exp ${e.number}${sub?' · '+sub.id:''}`,active:'exp',html,after(){initEditor();}};
+}
+
+function pageModules(id){
+  const m=MODULES.find(x=>x.id===id)||MODULES[0];
+  if(PV.id!==m.id)PV={id:m.id,page:1,zoom:1};
+  return{title:'Modules',active:'modules',html:`<div class="wrap">${crumbs([['Home','#/'],['Modules']])}<h1 id="h1" tabindex="-1" style="margin-bottom:6px">Modules</h1><p class="muted" style="margin-bottom:18px">Select a module to open its study material in the PDF viewer.</p>
+   <div class="mods"><nav class="mlist" aria-label="Module list">${MODULES.map(x=>`<a class="mi ${x.id===m.id?'on':''}" href="#/modules/${x.id}" ${x.id===m.id?'aria-current="page"':''}>Mod ${x.n}<small>${esc(x.title)}</small></a>`).join('')}</nav>
+   <div class="card pdf" id="pdfpanel">${pdfView(m)}</div></div></div>`};
+}
+let PV={id:null,page:1,zoom:1};
+function pdfView(m){
+  const u=hasUrl(m.url);
+  const paper=(()=>{const sec=m.topics[(PV.page-2+m.topics.length*4)%m.topics.length];
+    return `<div class="paper" style="--z:${PV.zoom}">${PV.page===1?`<div class="eyebrow">Module ${m.n}</div><h3>${esc(m.title)}</h3><p class="muted">Related experiments: ${esc(m.ref)}</p><div class="ln" style="width:90%"></div><div class="ln"></div><div class="ln" style="width:70%"></div><p class="muted" style="margin-top:1em"><b>Topics</b></p>${m.topics.map(t=>`<div>• ${esc(t)}</div>`).join('')}`
+      :`<h3>${esc(sec)}</h3>${'<div class="ln"></div><div class="ln" style="width:92%"></div><div class="ln" style="width:85%"></div><div class="ln"></div><div class="ln" style="width:60%"></div>'.repeat(2)}`}
+      <div class="pn-n">Preview page — attach the real PDF in MODULES (url) · Page ${PV.page} of ${m.pages}</div></div>`;})();
+  return `<div class="pdf-h"><h2>PDF Viewer · Mod ${m.n}</h2>
+   <button class="btn btn-sm btn-ico" data-act="pdf-prev" aria-label="Previous page" ${PV.page<=1?'disabled':''}>${ic('left',16)}</button>
+   <label class="sr" for="pg">Page number</label><input id="pg" type="number" min="1" max="${m.pages}" value="${PV.page}"><span class="muted">/ ${m.pages}</span>
+   <button class="btn btn-sm btn-ico" data-act="pdf-next" aria-label="Next page" ${PV.page>=m.pages?'disabled':''}>${ic('right',16)}</button>
+   <button class="btn btn-sm btn-ico" data-act="pdf-zout" aria-label="Zoom out">${ic('zout',16)}</button><button class="btn btn-sm" data-act="pdf-zreset" aria-label="Reset zoom">${Math.round(PV.zoom*100)}%</button><button class="btn btn-sm btn-ico" data-act="pdf-zin" aria-label="Zoom in">${ic('zin',16)}</button>
+   <button class="btn btn-sm btn-ico" data-act="pdf-full" aria-label="Full screen">${ic('full',16)}</button>
+   ${u?`<a class="btn btn-sm" href="${esc(m.url)}" download>${ic('download',15)} Download</a><a class="btn btn-sm" href="${esc(m.url)}" target="_blank" rel="noopener noreferrer">${ic('external',15)} Open</a><button class="btn btn-sm" data-act="pdf-retry">${ic('refresh',15)} Retry</button>`
+     :`<span class="btn btn-sm off" title="No PDF attached yet. Add a url for this module in MODULES." aria-disabled="true">${ic('download',15)} Download</span><span class="btn btn-sm off" title="No PDF attached yet." aria-disabled="true">${ic('external',15)} Open</span>`}</div>
+   <div class="pdf-b">${u?`<iframe class="pdf-frame" title="${esc(m.title)}" src="${esc(m.url)}#page=${PV.page}"></iframe>`:paper}</div>
+   ${u?'<p class="muted" style="padding:8px 16px;margin:0">Unable to load material? Press Retry or open it in a new tab.</p>':''}`;
+}
+
+function pageTools(){
+  const cats=[...new Set(TOOLS.map(t=>t.cat))];
+  return{title:'Tools',active:'tools',html:`<div class="wrap">${crumbs([['Home','#/'],['Tools']])}<h1 id="h1" tabindex="-1">Tools</h1><p class="muted">Libraries and software used in this lab.</p>
+   <div class="filters" style="grid-template-columns:1fr"><div class="fld" style="margin:0"><label class="sr" for="tq">Search tools</label><input id="tq" data-tfilter placeholder="Search tools..." autocomplete="off"></div></div>
+   <div class="tabs" role="tablist"><button class="tab on" data-act="tcat" data-cat="">All</button>${cats.map(c=>`<button class="tab" data-act="tcat" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}</div><div class="grid" id="tgrid"></div></div>`,after(){drawTools('');}};
+}
+let TCAT='';
+function drawTools(cat){
+  if(cat!==undefined)TCAT=cat;if(!$('#tgrid'))return;
+  const q=($('#tq')||{value:''}).value.toLowerCase();
+  const r=TOOLS.filter(t=>(!TCAT||t.cat===TCAT)&&(!q||(t.name+' '+t.desc+' '+t.cat).toLowerCase().includes(q)));
+  $('#tgrid').innerHTML=r.map((t,i)=>`<article class="card tool"><div style="display:flex;gap:12px;align-items:center"><div class="mono-b" style="background:${badgeColors[TOOLS.indexOf(t)%badgeColors.length]}">${esc(t.name.slice(0,2))}</div><div><h3>${esc(t.name)}</h3><span class="chip">${esc(t.cat)}</span></div></div><p class="muted" style="margin:0">${esc(t.desc)}</p>
+    <div class="exp-foot"><a class="btn btn-pri btn-sm" href="#/tools/${t.id}">Documentation ${ic('right',14)}</a><a class="btn btn-sm" href="${esc(t.site)}" target="_blank" rel="noopener noreferrer">Official Website ${ic('external',14)}</a></div></article>`).join('')||'<div class="empty">No tools found.<br>Try another search.</div>';
+  $$('.tab').forEach(b=>{const on=b.dataset.cat===TCAT;b.classList.toggle('on',on);b.setAttribute('aria-selected',String(on));});
+}
+function pageTool(id){
+  const t=TOOLS.find(x=>x.id===id);if(!t)return notFound('Tool not found.');
+  const used=EXPS.filter(e=>e.tools.includes(t.name));
+  return{title:t.name,active:'tools',html:`<div class="wrap">${crumbs([['Home','#/'],['Tools','#/tools'],[t.name]])}
+   <div class="sec-h"><div><div class="eyebrow">${esc(t.cat)}</div><h1 id="h1" tabindex="-1">${esc(t.name)}</h1></div><div class="acts"><a class="btn" href="${esc(t.docs)}" target="_blank" rel="noopener noreferrer">Official docs ${ic('external',14)}</a><a class="btn btn-pri" href="${esc(t.site)}" target="_blank" rel="noopener noreferrer">Website ${ic('external',14)}</a></div></div>
+   <div class="card block"><h2>Overview</h2><p>${esc(t.desc)}</p></div>
+   <div class="card block"><h2>Installation</h2><pre class="snip" id="inst">${esc(t.install)}</pre><button class="btn btn-sm" data-act="copytxt" data-target="inst">${ic('copy',14)} Copy</button></div>
+   <div class="card block"><h2>Basic usage</h2><pre class="snip" id="usg">${esc(t.usage)}</pre><button class="btn btn-sm" data-act="copytxt" data-target="usg">${ic('copy',14)} Copy</button></div>
+   <div class="card block"><h2>Experiments using this tool</h2>${used.length?used.map(e=>`<p><a href="#/experiments/${esc(e.id)}"><b>EXP-${esc(e.number)}</b> ${esc(e.title)}</a></p>`).join(''):'<p class="muted">No experiments use this tool yet.</p>'}</div></div>`};
+}
+
+/* ==========================================================
+   9. ADD / EDIT / DELETE EXPERIMENT (modal)
+   ========================================================== */
+let DR=null,DR_TAB='main';
+const pad=n=>String(n).padStart(2,'0');
+function nextNumber(){return pad(EXPS.reduce((m,e)=>Math.max(m,parseInt(e.number,10)||0),0)+1);}
+function blankSub(i){return{id:'ABCDE'[i],title:'',aim:'',procedure:[],code:'',output:'',image:'',plot:false};}
+function openEditor(id){
+  DR=id?clone(getExp(id)):{id:'',number:nextNumber(),title:'',description:'',overview:'',tools:[],difficulty:'Beginner',subs:[]};
+  DR.isNew=!id;while(DR.subs.length<5)DR.subs.push(blankSub(DR.subs.length));
+  DR_TAB='main';drawModal();
+}
+function drawModal(){
+  let m=$('#emodal');if(!m){m=document.createElement('div');m.id='emodal';m.className='modal-bg';document.body.appendChild(m);m.addEventListener('mousedown',e=>{if(e.target===m)closeModal();});}
+  const tabs=['main'].concat('ABCDE'.split(''));
+  let form;
+  if(DR_TAB==='main'){
+    form=`<div class="row2"><div class="fld"><label for="f-number">Experiment number *</label><input id="f-number" value="${esc(DR.number)}"></div>
+     <div class="fld"><label for="f-diff">Difficulty</label><select id="f-diff">${['Beginner','Intermediate','Advanced'].map(d=>`<option ${d===DR.difficulty?'selected':''}>${d}</option>`).join('')}</select></div></div>
+     <div class="fld"><label for="f-title">Title *</label><input id="f-title" value="${esc(DR.title)}"></div>
+     <div class="fld"><label for="f-desc">Description</label><textarea id="f-desc" style="min-height:70px;font:inherit">${esc(DR.description)}</textarea><small id="wc"></small></div>
+     <div class="fld"><label for="f-over">Overview</label><textarea id="f-over" style="min-height:90px;font:inherit">${esc(DR.overview)}</textarea></div>
+     <div class="fld"><label for="f-tools">Tools (comma separated)</label><input id="f-tools" value="${esc(DR.tools.join(', '))}"></div>`;
+  }else{
+    const s=DR.subs['ABCDE'.indexOf(DR_TAB)];
+    form=`<p class="muted">Leave the title empty to skip this part.</p><div class="fld"><label for="f-st">Part ${DR_TAB} title</label><input id="f-st" value="${esc(s.title)}"></div>
+     <div class="fld"><label for="f-sa">Aim</label><textarea id="f-sa" style="min-height:60px;font:inherit">${esc(s.aim)}</textarea></div>
+     <div class="fld"><label for="f-sp">Procedure (one step per line)</label><textarea id="f-sp">${esc(s.procedure.join('\n'))}</textarea></div>
+     <div class="fld"><label for="f-sc">Code</label><textarea id="f-sc" style="min-height:160px">${esc(s.code)}</textarea></div>
+     <div class="fld"><label for="f-so">Output</label><textarea id="f-so">${esc(s.output)}</textarea></div>
+     <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="f-plot" ${s.plot?'checked':''} style="width:auto"> This part produces a plot (shows the PNG slot)</label>`;
+  }
+  m.innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="m-h"><h2 id="mt">${DR.isNew?'Add Experiment':'Edit Experiment'}</h2><button class="icon-btn" data-act="closemodal" aria-label="Close">${ic('x')}</button></div>
+   <div class="m-b"><div class="tabs" role="tablist">${tabs.map(t=>`<button class="tab ${t===DR_TAB?'on':''}" data-act="mtab" data-tab="${t}" role="tab" aria-selected="${t===DR_TAB}">${t==='main'?'Details':'Part '+t}</button>`).join('')}</div><div class="fld-wrap">${form}</div></div>
+   <div class="m-f">${DR.isNew?'':`<button class="btn btn-danger" style="margin-right:auto" data-act="mresetone">${ic('refresh',15)} Reset to default</button>`}<button class="btn" data-act="closemodal">Cancel</button><button class="btn btn-pri" data-act="msave">Save Changes</button></div></div>`;
+  updWC();const f=$('input,textarea,select',m);if(f)f.focus();
+}
+function updWC(){const d=$('#f-desc'),w=$('#wc');if(d&&w){const n=d.value.trim()?d.value.trim().split(/\s+/).length:0;w.textContent=`${n} words (about 15 recommended)`;}}
+function readForm(){
+  if(!$('#emodal'))return;
+  if(DR_TAB==='main'){DR.number=$('#f-number').value.trim();DR.title=$('#f-title').value.trim();DR.description=$('#f-desc').value.trim();DR.overview=$('#f-over').value.trim();DR.difficulty=$('#f-diff').value;DR.tools=$('#f-tools').value.split(',').map(s=>s.trim()).filter(Boolean);}
+  else{const s=DR.subs['ABCDE'.indexOf(DR_TAB)];s.title=$('#f-st').value.trim();s.aim=$('#f-sa').value.trim();s.procedure=$('#f-sp').value.split('\n').map(x=>x.trim()).filter(Boolean);s.code=$('#f-sc').value;s.output=$('#f-so').value;s.plot=$('#f-plot').checked;}
+}
+function closeModal(){const m=$('#emodal');if(m)m.remove();DR=null;}
+function saveModal(){
+  readForm();
+  if(!DR.title){DR_TAB='main';drawModal();toast('Title is required.',true);return;}
+  if(!DR.number){DR_TAB='main';drawModal();toast('Experiment number is required.',true);return;}
+  if(EXPS.some(e=>e.number===DR.number&&e.id!==DR.id)){DR_TAB='main';drawModal();toast('That experiment number is already used.',true);return;}
+  const subs=DR.subs.filter(s=>s.title||s.code.trim()).map((s,i)=>({...s,id:'ABCDE'[i],title:s.title||'Part '+'ABCDE'[i]}));
+  const e={...DR,subs};delete e.isNew;
+  if(DR.isNew){e.id='exp-'+Date.now().toString(36);EXPS.push(e);}else{const i=EXPS.findIndex(x=>x.id===DR.id);EXPS[i]=e;}
+  saveExps();closeModal();toast('Experiment saved.');route();
+}
+function deleteExp(id){
+  const e=getExp(id);if(!e)return;
+  if(!confirm(`Delete Experiment ${e.number}: ${e.title}?\nThis cannot be undone (you can reset to defaults later).`))return;
+  EXPS=EXPS.filter(x=>x.id!==id);delete DONE[id];saveExps();saveDone();toast('Experiment deleted.');
+  if(/^#\/experiments\//.test(location.hash))location.hash='#/experiments';else route();
+}
+function exportJSON(){const b=new Blob([JSON.stringify(EXPS,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ds-lab-experiments.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);}
+
+/* ==========================================================
+   10. ROUTER & RENDER
+   ========================================================== */
+function render(p){
+  closeSearch();
+  $('#app').innerHTML=header(p.active)+`<main id="main">${p.html}</main>`+footer();
+  document.title=`${p.title} · ${CONFIG.portal.name} · ${CONFIG.portal.university}`;
+  window.scrollTo(0,0);
+  if(p.after)p.after();
+  const h=$('#h1');if(h)h.focus({preventScroll:true});
+}
+function route(){
+  const parts=location.hash.replace(/^#\/?/,'').split('/').filter(Boolean).map(decodeURIComponent);
+  let p;
+  if(!parts.length)p=pageHome();
+  else if(parts[0]==='experiments')p=parts.length===1?pageExpList():pageExp(parts[1],parts[2]);
+  else if(parts[0]==='modules')p=pageModules(parts[1]);
+  else if(parts[0]==='tools')p=parts.length===1?pageTools():pageTool(parts[1]);
+  else p=notFound();
+  render(p);
+}
+
+/* ==========================================================
+   11. EVENTS
+   ========================================================== */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act,m=MODULES.find(x=>x.id===PV.id);
+  const redraw=()=>{const pp=$('#pdfpanel');if(pp&&m)pp.innerHTML=pdfView(m);};
+  switch(a){
+    case 'search':openSearch();break;
+    case 'menu':{const n=$('#nav'),o=n.classList.toggle('open');b.setAttribute('aria-expanded',String(o));break;}
+    case 'clearq':{const i=b.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'));i.focus();break;}
+    case 'run':sbRun();break;
+    case 'compile':sbCompile();break;
+    case 'reset':sbReset();break;
+    case 'copycode':copyText($('#code').value);break;
+    case 'copytxt':copyText($('#'+b.dataset.target).textContent);break;
+    case 'done':{const ex=b.dataset.exp,sb=b.dataset.sub;DONE[ex]=DONE[ex]||{};DONE[ex][sb]=!DONE[ex][sb];saveDone();toast(DONE[ex][sb]?'Marked as complete.':'Marked as not complete.');route();break;}
+    case 'add':openEditor(null);break;
+    case 'edit':openEditor(b.dataset.id);break;
+    case 'del':deleteExp(b.dataset.id);break;
+    case 'closemodal':closeModal();break;
+    case 'msave':saveModal();break;
+    case 'mtab':readForm();DR_TAB=b.dataset.tab;drawModal();break;
+    case 'mresetone':{const d=DEFAULTS.find(x=>x.id===DR.id);if(d){const keep=DR.id;DR=clone(d);DR.id=keep;while(DR.subs.length<5)DR.subs.push(blankSub(DR.subs.length));toast('Fields reset. Press Save to apply.');drawModal();}else toast('No default exists for this experiment.',true);break;}
+    case 'clearf':['fq','fd','ft'].forEach(i=>{$('#'+i).value='';});$('#fs').value='num';drawList();break;
+    case 'export':exportJSON();break;
+    case 'import':{let f=$('#impfile');if(!f){f=document.createElement('input');f.type='file';f.accept='application/json';f.id='impfile';f.hidden=true;document.body.appendChild(f);}f.value='';f.click();break;}
+    case 'resetdata':if(confirm('Reset all experiments to the original defaults? Your edits will be lost.')){EXPS=clone(DEFAULTS);DONE={};saveExps();saveDone();toast('Defaults restored.');route();}break;
+    case 'upload':{let f=$('#imgfile');if(!f){f=document.createElement('input');f.type='file';f.accept='image/*';f.id='imgfile';f.hidden=true;document.body.appendChild(f);}f.value='';f.click();break;}
+    case 'tcat':drawTools(b.dataset.cat);break;
+    case 'pdf-prev':PV.page=Math.max(1,PV.page-1);redraw();break;
+    case 'pdf-next':PV.page=Math.min(m.pages,PV.page+1);redraw();break;
+    case 'pdf-zin':PV.zoom=Math.min(2,+(PV.zoom+.1).toFixed(2));redraw();break;
+    case 'pdf-zout':PV.zoom=Math.max(.5,+(PV.zoom-.1).toFixed(2));redraw();break;
+    case 'pdf-zreset':PV.zoom=1;redraw();break;
+    case 'pdf-retry':redraw();toast('Reloading PDF…');break;
+    case 'pdf-full':{const pp=$('#pdfpanel');if(pp&&pp.requestFullscreen)pp.requestFullscreen();else toast('Full screen is not supported here.',true);break;}
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='pg'){const m=MODULES.find(x=>x.id===PV.id);PV.page=Math.min(m.pages,Math.max(1,parseInt(t.value,10)||1));$('#pdfpanel').innerHTML=pdfView(m);}
+  else if(t.id==='imgfile'&&t.files[0]){const f=t.files[0],r=new FileReader();r.onload=()=>{const ex=getExp(CUR.expId);const s=ex&&ex.subs.find(x=>x.id===CUR.subId);if(s){s.image=r.result;if(saveExps())toast('Plot image saved.');route();}};r.readAsDataURL(f);}
+  else if(t.id==='impfile'&&t.files[0]){const r=new FileReader();r.onload=()=>{try{const a=JSON.parse(r.result);if(!Array.isArray(a)||!a.every(x=>x&&x.id&&x.title&&Array.isArray(x.subs)))throw new Error('Invalid file');EXPS=a;saveExps();toast('Experiments imported.');route();
+}catch(e){toast('Invalid JSON file.',true);}};r.readAsText(t.files[0]);}
+  else if(t.matches&&t.matches('[data-filter]'))drawList();
+  else if(t.matches&&t.matches('[data-tfilter]'))drawTools();
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.matches&&t.matches('[data-filter]'))drawList();
+  else if(t.matches&&t.matches('[data-tfilter]'))drawTools();
+  else if(t.id==='f-desc')updWC();
+});
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openSearch();}
+  if(e.key==='Escape')closeSearch();
+});
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
+</body>
+</html>
