@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DS Digital Lab · Mohan Babu University</title>
+<title>DS Digital Lab · Pandeti Diwakar · Mohan Babu University</title>
+<meta name="description" content="Data Science Digital Lab portal for Pandeti Diwakar (DS-2) at Mohan Babu University: experiments, modules, Python tools and progress tracking.">
+<meta name="theme-color" content="#5b2a86">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DS Digital Lab · Pandeti Diwakar">
+<meta property="og:description" content="Experiments, modules and Python tools for the Data Science lab at Mohan Babu University.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%235b2a86'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui,sans-serif' font-size='26' font-weight='800' fill='white'%3EDS%3C/text%3E%3C/svg%3E">
 <style>
 /* ============ 1. TOKENS ============ */
 :root{--bg:#f6f3fc;--card:#fff;--ink:#241b3a;--muted:#6b6480;--line:#e7e1f0;--pri:#5b2a86;--pri2:#7c3aed;--acc:#e0592a;--soft:#f3eefb;--ok:#15803d;--bad:#b91c1c;--r:16px;--sh:0 1px 2px rgba(36,27,58,.05),0 10px 28px rgba(36,27,58,.08);--mono:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
@@ -195,8 +202,8 @@ pre.snip{background:#1e1533;color:#f0e9fb;border-radius:12px;padding:14px;overfl
 .home .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;position:relative;z-index:2}
 .home .hero-actions .btn{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(8px)}
 .home .hero-actions .btn:hover{background:rgba(255,255,255,.16)}
-.home .hero-actions .btn-primary{background:#fff;color:#172554;border-color:#fff}
-.home .hero-actions .btn-primary:hover{background:#e0f2fe}
+.home .hero-actions .btn-pri{background:#fff;color:#172554;border-color:#fff}
+.home .hero-actions .btn-pri:hover{background:#e0f2fe}
 .home .stats{
   margin-top:26px;
   display:grid;
@@ -305,13 +312,11 @@ const CONFIG={
   portal:{name:"DS Digital Lab",university:"Mohan Babu University",year:"2026"},
   student:{
     photoUrl:"",                       // paste an image path/URL here (empty = initials avatar)
-    name:"PANDETI DIWAKAR",rollNumber:"24102A030066",section:"DS-2",subject:"Data Science",
-    faculty:"BosuBabu",designation:"Assistant Professor",
+    name:"Pandeti Diwakar",rollNumber:"24102A030066",section:"DS-2",subject:"Data Science",
+    faculty:"Bosu Babu",designation:"Assistant Professor",
     socials:[
-      {id:"web",label:"Website",url:"[WEBSITE_URL]"},
-      {id:"linkedin",label:"LinkedIn",url:"[LINKEDIN_URL]"},
-      {id:"github",label:"GitHub",url:"[GITHUB_URL]"},
-      {id:"other",label:"Other",url:"[OTHER_URL]"}
+      {id:"web",label:"Website",url:"https://pandetidiwa24.github.io/ds/"},
+      {id:"github",label:"GitHub",url:"https://github.com/pandetidiwa24"}
     ]},
   /* Sandbox backend contract (optional): POST {backendUrl}/run  { code, language } -> { stdout, stderr }
      Leave empty = demo mode (saved notebook outputs are shown; code is NOT executed). */
@@ -1248,7 +1253,7 @@ function pageHome(){
       <h1 id="h1" tabindex="-1">Learn. Experiment.<br>Build with Data.</h1>
       <p class="lead">Your personal Data Science lab dashboard — explore experiments, practise Python, review outputs and track your progress from one place.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#/experiments">${ic('play',16)} Start experimenting</a>
+        <a class="btn btn-pri" href="#/experiments">${ic('play',16)} Start experimenting</a>
         <a class="btn" href="#/modules">${ic('book',16)} Study modules</a>
       </div>
       <div class="stats">
